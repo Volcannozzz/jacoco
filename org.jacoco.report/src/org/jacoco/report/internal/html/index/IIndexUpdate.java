@@ -20,14 +20,12 @@ import org.jacoco.report.internal.html.ILinkable;
  */
 public interface IIndexUpdate {
 
-	/**
-	 * Adds a class to the index.
-	 *
-	 * @param link
-	 *            link to the class
-	 * @param classid
-	 *            identifier of the class
-	 */
-	void addClass(ILinkable link, long classid);
+    /**
+     * Adds a class to the index.
+     *
+     * @param link    link to the class
+     * @param classid identifier of the class
+     */
+    void addClass(ILinkable link, long classid);
 
 }

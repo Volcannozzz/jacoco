@@ -21,11 +21,11 @@ import java.util.Collection;
  */
 public interface IBundleCoverage extends ICoverageNode {
 
-	/**
-	 * Returns all packages contained in this bundle.
-	 *
-	 * @return all packages
-	 */
-	Collection<IPackageCoverage> getPackages();
+    /**
+     * Returns all packages contained in this bundle.
+     *
+     * @return all packages
+     */
+    Collection<IPackageCoverage> getPackages();
 
 }

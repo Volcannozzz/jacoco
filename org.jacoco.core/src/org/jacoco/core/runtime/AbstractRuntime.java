@@ -19,25 +19,26 @@ import java.util.Random;
  */
 public abstract class AbstractRuntime implements IRuntime {
 
-	/** access to the runtime data */
-	protected RuntimeData data;
+    private static final Random RANDOM = new Random();
+    /**
+     * access to the runtime data
+     */
+    protected RuntimeData data;
 
-	/**
-	 * Subclasses must call this method when overwriting it.
-	 */
-	public void startup(final RuntimeData data) throws Exception {
-		this.data = data;
-	}
+    /**
+     * Creates a random session identifier.
+     *
+     * @return random session identifier
+     */
+    public static String createRandomId() {
+        return Integer.toHexString(RANDOM.nextInt());
+    }
 
-	private static final Random RANDOM = new Random();
-
-	/**
-	 * Creates a random session identifier.
-	 *
-	 * @return random session identifier
-	 */
-	public static String createRandomId() {
-		return Integer.toHexString(RANDOM.nextInt());
-	}
+    /**
+     * Subclasses must call this method when overwriting it.
+     */
+    public void startup(final RuntimeData data) throws Exception {
+        this.data = data;
+    }
 
 }

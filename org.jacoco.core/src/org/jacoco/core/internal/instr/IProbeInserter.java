@@ -18,12 +18,11 @@ package org.jacoco.core.internal.instr;
  */
 interface IProbeInserter {
 
-	/**
-	 * Inserts the probe with the given id.
-	 *
-	 * @param id
-	 *            id of the probe to insert
-	 */
-	void insertProbe(int id);
+    /**
+     * Inserts the probe with the given id.
+     *
+     * @param id id of the probe to insert
+     */
+    void insertProbe(int id);
 
 }

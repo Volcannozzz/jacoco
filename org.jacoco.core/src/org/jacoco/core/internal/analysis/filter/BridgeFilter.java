@@ -20,13 +20,13 @@ import org.objectweb.asm.tree.MethodNode;
  */
 final class BridgeFilter implements IFilter {
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
-		if ((methodNode.access & Opcodes.ACC_BRIDGE) == 0) {
-			return;
-		}
-		output.ignore(methodNode.instructions.getFirst(),
-				methodNode.instructions.getLast());
-	}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
+        if ((methodNode.access & Opcodes.ACC_BRIDGE) == 0) {
+            return;
+        }
+        output.ignore(methodNode.instructions.getFirst(),
+                methodNode.instructions.getLast());
+    }
 
 }

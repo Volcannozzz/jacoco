@@ -18,12 +18,11 @@ package org.jacoco.core.analysis;
  */
 public interface ICoverageVisitor {
 
-	/**
-	 * For analyzed class coverage data is emitted to this method.
-	 *
-	 * @param coverage
-	 *            coverage data for a class
-	 */
-	void visitCoverage(IClassCoverage coverage);
+    /**
+     * For analyzed class coverage data is emitted to this method.
+     *
+     * @param coverage coverage data for a class
+     */
+    void visitCoverage(IClassCoverage coverage);
 
 }

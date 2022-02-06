@@ -12,14 +12,14 @@
  *******************************************************************************/
 package org.jacoco.report.internal.html.table;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-
 import org.jacoco.core.analysis.ICoverageNode;
 import org.jacoco.report.internal.ReportOutputFolder;
 import org.jacoco.report.internal.html.HTMLElement;
 import org.jacoco.report.internal.html.resources.Resources;
+
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Column for the item label. The implementation is stateless, instances might
@@ -27,31 +27,31 @@ import org.jacoco.report.internal.html.resources.Resources;
  */
 public class LabelColumn implements IColumnRenderer {
 
-	private static final Comparator<ITableItem> COMPARATOR = new Comparator<ITableItem>() {
-		public int compare(final ITableItem i1, final ITableItem i2) {
-			return i1.getLinkLabel().compareToIgnoreCase(i2.getLinkLabel());
-		}
-	};
+    private static final Comparator<ITableItem> COMPARATOR = new Comparator<ITableItem>() {
+        public int compare(final ITableItem i1, final ITableItem i2) {
+            return i1.getLinkLabel().compareToIgnoreCase(i2.getLinkLabel());
+        }
+    };
 
-	public boolean init(final List<? extends ITableItem> items,
-			final ICoverageNode total) {
-		return true;
-	}
+    public boolean init(final List<? extends ITableItem> items,
+                        final ICoverageNode total) {
+        return true;
+    }
 
-	public void footer(final HTMLElement td, final ICoverageNode total,
-			final Resources resources, final ReportOutputFolder base)
-			throws IOException {
-		td.text("Total");
-	}
+    public void footer(final HTMLElement td, final ICoverageNode total,
+                       final Resources resources, final ReportOutputFolder base)
+            throws IOException {
+        td.text("Total");
+    }
 
-	public void item(final HTMLElement td, final ITableItem item,
-			final Resources resources, final ReportOutputFolder base)
-			throws IOException {
-		td.a(item, base);
-	}
+    public void item(final HTMLElement td, final ITableItem item,
+                     final Resources resources, final ReportOutputFolder base)
+            throws IOException {
+        td.a(item, base);
+    }
 
-	public Comparator<ITableItem> getComparator() {
-		return COMPARATOR;
-	}
+    public Comparator<ITableItem> getComparator() {
+        return COMPARATOR;
+    }
 
 }

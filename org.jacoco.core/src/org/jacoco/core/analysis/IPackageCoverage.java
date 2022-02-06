@@ -24,18 +24,18 @@ import java.util.Collection;
  */
 public interface IPackageCoverage extends ICoverageNode {
 
-	/**
-	 * Returns all classes contained in this package.
-	 *
-	 * @return all classes
-	 */
-	Collection<IClassCoverage> getClasses();
+    /**
+     * Returns all classes contained in this package.
+     *
+     * @return all classes
+     */
+    Collection<IClassCoverage> getClasses();
 
-	/**
-	 * Returns all source files in this package.
-	 *
-	 * @return all source files
-	 */
-	Collection<ISourceFileCoverage> getSourceFiles();
+    /**
+     * Returns all source files in this package.
+     *
+     * @return all source files
+     */
+    Collection<ISourceFileCoverage> getSourceFiles();
 
 }

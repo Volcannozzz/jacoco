@@ -23,50 +23,47 @@ import java.io.InputStream;
  */
 public class CompactDataInput extends DataInputStream {
 
-	/**
-	 * Creates a new {@link CompactDataInput} that uses the specified underlying
-	 * input stream.
-	 *
-	 * @param in
-	 *            underlying input stream
-	 */
-	public CompactDataInput(final InputStream in) {
-		super(in);
-	}
+    /**
+     * Creates a new {@link CompactDataInput} that uses the specified underlying
+     * input stream.
+     *
+     * @param in underlying input stream
+     */
+    public CompactDataInput(final InputStream in) {
+        super(in);
+    }
 
-	/**
-	 * Reads a variable length representation of an integer value.
-	 *
-	 * @return read value
-	 * @throws IOException
-	 *             if thrown by the underlying stream
-	 */
-	public int readVarInt() throws IOException {
-		final int value = 0xFF & readByte();
-		if ((value & 0x80) == 0) {
-			return value;
-		}
-		return (value & 0x7F) | (readVarInt() << 7);
-	}
+    /**
+     * Reads a variable length representation of an integer value.
+     *
+     * @return read value
+     * @throws IOException if thrown by the underlying stream
+     */
+    public int readVarInt() throws IOException {
+        final int value = 0xFF & readByte();
+        if ((value & 0x80) == 0) {
+            return value;
+        }
+        return (value & 0x7F) | (readVarInt() << 7);
+    }
 
-	/**
-	 * Reads a boolean array.
-	 *
-	 * @return boolean array
-	 * @throws IOException
-	 *             if thrown by the underlying stream
-	 */
-	public boolean[] readBooleanArray() throws IOException {
-		final boolean[] value = new boolean[readVarInt()];
-		int buffer = 0;
-		for (int i = 0; i < value.length; i++) {
-			if ((i % 8) == 0) {
-				buffer = readByte();
-			}
-			value[i] = (buffer & 0x01) != 0;
-			buffer >>>= 1;
-		}
-		return value;
-	}
+    /**
+     * Reads a boolean array.
+     *
+     * @return boolean array
+     * @throws IOException if thrown by the underlying stream
+     */
+    public boolean[] readBooleanArray() throws IOException {
+        final boolean[] value = new boolean[readVarInt()];
+        int buffer = 0;
+        for (int i = 0; i < value.length; i++) {
+            if ((i % 8) == 0) {
+                buffer = readByte();
+            }
+            value[i] = (buffer & 0x01) != 0;
+            buffer >>>= 1;
+        }
+        return value;
+    }
 
 }

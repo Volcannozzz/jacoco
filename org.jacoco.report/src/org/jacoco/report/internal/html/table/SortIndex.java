@@ -21,77 +21,71 @@ import java.util.List;
  * A index on a list of items sorted with a given {@link Comparator}. The index
  * does not change the list itself.
  *
- * @param <T>
- *            type of the items
+ * @param <T> type of the items
  */
 final class SortIndex<T> {
 
-	private final Comparator<? super T> comparator;
+    private final Comparator<? super T> comparator;
+    private final List<Entry> list = new ArrayList<Entry>();
+    private int[] positions;
 
-	private class Entry implements Comparable<Entry> {
+    /**
+     * Creates a new index based in the given comparator.
+     *
+     * @param comparator comparator to sort items
+     */
+    public SortIndex(final Comparator<? super T> comparator) {
+        this.comparator = comparator;
+    }
 
-		final int idx;
+    /**
+     * Initializes the index for the given list of items.
+     *
+     * @param items list of items
+     */
+    public void init(final List<? extends T> items) {
+        this.list.clear();
+        int idx = 0;
+        for (final T i : items) {
+            final Entry entry = new Entry(idx++, i);
+            this.list.add(entry);
+        }
+        Collections.sort(list);
+        if (positions == null || positions.length < items.size()) {
+            positions = new int[items.size()];
+        }
+        int pos = 0;
+        for (final Entry e : this.list) {
+            positions[e.idx] = pos++;
+        }
+    }
 
-		final T item;
+    /**
+     * Returns the sorted position of the element with the given index in the
+     * items list provided to the init() method.
+     *
+     * @param idx index of a element of the list
+     * @return its position in a sorted list
+     */
+    public int getPosition(final int idx) {
+        return positions[idx];
+    }
 
-		Entry(final int idx, final T item) {
-			this.idx = idx;
-			this.item = item;
-		}
+    private class Entry implements Comparable<Entry> {
 
-		public int compareTo(final Entry o) {
-			return comparator.compare(item, o.item);
-		}
+        final int idx;
 
-	}
+        final T item;
 
-	private final List<Entry> list = new ArrayList<Entry>();
+        Entry(final int idx, final T item) {
+            this.idx = idx;
+            this.item = item;
+        }
 
-	private int[] positions;
+        public int compareTo(final Entry o) {
+            return comparator.compare(item, o.item);
+        }
 
-	/**
-	 * Creates a new index based in the given comparator.
-	 *
-	 * @param comparator
-	 *            comparator to sort items
-	 */
-	public SortIndex(final Comparator<? super T> comparator) {
-		this.comparator = comparator;
-	}
-
-	/**
-	 * Initializes the index for the given list of items.
-	 *
-	 * @param items
-	 *            list of items
-	 */
-	public void init(final List<? extends T> items) {
-		this.list.clear();
-		int idx = 0;
-		for (final T i : items) {
-			final Entry entry = new Entry(idx++, i);
-			this.list.add(entry);
-		}
-		Collections.sort(list);
-		if (positions == null || positions.length < items.size()) {
-			positions = new int[items.size()];
-		}
-		int pos = 0;
-		for (final Entry e : this.list) {
-			positions[e.idx] = pos++;
-		}
-	}
-
-	/**
-	 * Returns the sorted position of the element with the given index in the
-	 * items list provided to the init() method.
-	 *
-	 * @param idx
-	 *            index of a element of the list
-	 * @return its position in a sorted list
-	 */
-	public int getPosition(final int idx) {
-		return positions[idx];
-	}
+    }
 
 }

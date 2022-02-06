@@ -12,23 +12,23 @@
  *******************************************************************************/
 package org.jacoco.report.internal.html.table;
 
-import java.util.Comparator;
-
 import org.jacoco.core.analysis.ICoverageNode;
+
+import java.util.Comparator;
 
 /**
  * Adapter to sort table items based on their coverage nodes.
  */
 class TableItemComparator implements Comparator<ITableItem> {
 
-	private final Comparator<ICoverageNode> comparator;
+    private final Comparator<ICoverageNode> comparator;
 
-	TableItemComparator(final Comparator<ICoverageNode> comparator) {
-		this.comparator = comparator;
-	}
+    TableItemComparator(final Comparator<ICoverageNode> comparator) {
+        this.comparator = comparator;
+    }
 
-	public int compare(final ITableItem i1, final ITableItem i2) {
-		return comparator.compare(i1.getNode(), i2.getNode());
-	}
+    public int compare(final ITableItem i1, final ITableItem i2) {
+        return comparator.compare(i1.getNode(), i2.getNode());
+    }
 
 }

@@ -22,31 +22,27 @@ import org.jacoco.report.internal.html.IHTMLReportContext;
  */
 public class GroupPage extends TablePage<ICoverageNode> {
 
-	/**
-	 * Creates a new visitor in the given context.
-	 *
-	 * @param node
-	 *            corresponding coverage data
-	 * @param parent
-	 *            optional hierarchical parent
-	 * @param folder
-	 *            base folder to create this page in
-	 * @param context
-	 *            settings context
-	 */
-	public GroupPage(final ICoverageNode node, final ReportPage parent,
-			final ReportOutputFolder folder, final IHTMLReportContext context) {
-		super(node, parent, folder, context);
-	}
+    /**
+     * Creates a new visitor in the given context.
+     *
+     * @param node    corresponding coverage data
+     * @param parent  optional hierarchical parent
+     * @param folder  base folder to create this page in
+     * @param context settings context
+     */
+    public GroupPage(final ICoverageNode node, final ReportPage parent,
+                     final ReportOutputFolder folder, final IHTMLReportContext context) {
+        super(node, parent, folder, context);
+    }
 
-	@Override
-	protected String getOnload() {
-		return "initialSort(['breadcrumb', 'coveragetable'])";
-	}
+    @Override
+    protected String getOnload() {
+        return "initialSort(['breadcrumb', 'coveragetable'])";
+    }
 
-	@Override
-	protected String getFileName() {
-		return "index.html";
-	}
+    @Override
+    protected String getFileName() {
+        return "index.html";
+    }
 
 }

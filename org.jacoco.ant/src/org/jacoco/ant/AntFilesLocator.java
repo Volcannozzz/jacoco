@@ -12,46 +12,45 @@
  *******************************************************************************/
 package org.jacoco.ant;
 
+import org.apache.tools.ant.types.Resource;
+import org.jacoco.report.InputStreamSourceFileLocator;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tools.ant.types.Resource;
-import org.jacoco.report.InputStreamSourceFileLocator;
-
 /**
  * Source locator based on Ant file resources.
  */
 class AntFilesLocator extends InputStreamSourceFileLocator {
 
-	private final Map<String, Resource> resources;
+    private final Map<String, Resource> resources;
 
-	public AntFilesLocator(final String encoding, final int tabWidth) {
-		super(encoding, tabWidth);
-		this.resources = new HashMap<String, Resource>();
-	}
+    public AntFilesLocator(final String encoding, final int tabWidth) {
+        super(encoding, tabWidth);
+        this.resources = new HashMap<String, Resource>();
+    }
 
-	/**
-	 * Adds the given file resource as a potential source file.
-	 *
-	 * @param file
-	 *            file resource to add
-	 */
-	void add(final Resource file) {
-		resources.put(file.getName().replace(File.separatorChar, '/'), file);
-	}
+    /**
+     * Adds the given file resource as a potential source file.
+     *
+     * @param file file resource to add
+     */
+    void add(final Resource file) {
+        resources.put(file.getName().replace(File.separatorChar, '/'), file);
+    }
 
-	@Override
-	protected InputStream getSourceStream(final String path)
-			throws IOException {
-		final Resource file = resources.get(path);
-		if (file == null) {
-			return null;
-		} else {
-			return file.getInputStream();
-		}
-	}
+    @Override
+    protected InputStream getSourceStream(final String path)
+            throws IOException {
+        final Resource file = resources.get(path);
+        if (file == null) {
+            return null;
+        } else {
+            return file.getInputStream();
+        }
+    }
 
 }

@@ -22,28 +22,28 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public final class KotlinNotNullOperatorFilter implements IFilter {
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
-		final Matcher matcher = new Matcher();
-		for (final AbstractInsnNode i : methodNode.instructions) {
-			matcher.match(i, output);
-		}
-	}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
+        final Matcher matcher = new Matcher();
+        for (final AbstractInsnNode i : methodNode.instructions) {
+            matcher.match(i, output);
+        }
+    }
 
-	private static class Matcher extends AbstractMatcher {
-		public void match(final AbstractInsnNode start,
-				final IFilterOutput output) {
-			if (Opcodes.IFNONNULL != start.getOpcode()) {
-				return;
-			}
-			cursor = start;
-			nextIsInvoke(Opcodes.INVOKESTATIC, "kotlin/jvm/internal/Intrinsics",
-					"throwNpe", "()V");
-			if (cursor == null) {
-				return;
-			}
-			output.ignore(start, cursor);
-		}
-	}
+    private static class Matcher extends AbstractMatcher {
+        public void match(final AbstractInsnNode start,
+                          final IFilterOutput output) {
+            if (Opcodes.IFNONNULL != start.getOpcode()) {
+                return;
+            }
+            cursor = start;
+            nextIsInvoke(Opcodes.INVOKESTATIC, "kotlin/jvm/internal/Intrinsics",
+                    "throwNpe", "()V");
+            if (cursor == null) {
+                return;
+            }
+            output.ignore(start, cursor);
+        }
+    }
 
 }

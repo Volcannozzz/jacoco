@@ -12,27 +12,27 @@
  *******************************************************************************/
 package org.jacoco.cli.internal.commands;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.jacoco.cli.internal.Command;
 import org.jacoco.core.JaCoCo;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * The <code>version</code> command.
  */
 public class Version extends Command {
 
-	@Override
-	public String description() {
-		return "Print JaCoCo version information.";
-	}
+    @Override
+    public String description() {
+        return "Print JaCoCo version information.";
+    }
 
-	@Override
-	public int execute(final PrintWriter out, final PrintWriter err)
-			throws IOException {
-		out.println(JaCoCo.VERSION);
-		return 0;
-	}
+    @Override
+    public int execute(final PrintWriter out, final PrintWriter err)
+            throws IOException {
+        out.println(JaCoCo.VERSION);
+        return 0;
+    }
 
 }

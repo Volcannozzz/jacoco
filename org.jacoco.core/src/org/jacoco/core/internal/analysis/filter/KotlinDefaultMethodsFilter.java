@@ -22,25 +22,25 @@ import org.objectweb.asm.tree.MethodNode;
  */
 final class KotlinDefaultMethodsFilter implements IFilter {
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
-		if (!KotlinGeneratedFilter.isKotlinClass(context)) {
-			return;
-		}
-		new Matcher().match(methodNode, output);
-	}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
+        if (!KotlinGeneratedFilter.isKotlinClass(context)) {
+            return;
+        }
+        new Matcher().match(methodNode, output);
+    }
 
-	private static class Matcher extends AbstractMatcher {
-		private void match(final MethodNode methodNode,
-				final IFilterOutput output) {
-			firstIsALoad0(methodNode);
-			nextIs(Opcodes.INVOKESTATIC);
-			if (cursor != null && ((MethodInsnNode) cursor).owner
-					.endsWith("$DefaultImpls")) {
-				output.ignore(methodNode.instructions.getFirst(),
-						methodNode.instructions.getLast());
-			}
-		}
-	}
+    private static class Matcher extends AbstractMatcher {
+        private void match(final MethodNode methodNode,
+                           final IFilterOutput output) {
+            firstIsALoad0(methodNode);
+            nextIs(Opcodes.INVOKESTATIC);
+            if (cursor != null && ((MethodInsnNode) cursor).owner
+                    .endsWith("$DefaultImpls")) {
+                output.ignore(methodNode.instructions.getFirst(),
+                        methodNode.instructions.getLast());
+            }
+        }
+    }
 
 }

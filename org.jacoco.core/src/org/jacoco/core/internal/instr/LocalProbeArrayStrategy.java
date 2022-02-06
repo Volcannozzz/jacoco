@@ -25,30 +25,30 @@ import org.objectweb.asm.Opcodes;
  */
 class LocalProbeArrayStrategy implements IProbeArrayStrategy {
 
-	private final String className;
-	private final long classId;
-	private final int probeCount;
-	private final IExecutionDataAccessorGenerator accessorGenerator;
+    private final String className;
+    private final long classId;
+    private final int probeCount;
+    private final IExecutionDataAccessorGenerator accessorGenerator;
 
-	LocalProbeArrayStrategy(final String className, final long classId,
-			final int probeCount,
-			final IExecutionDataAccessorGenerator accessorGenerator) {
-		this.className = className;
-		this.classId = classId;
-		this.probeCount = probeCount;
-		this.accessorGenerator = accessorGenerator;
-	}
+    LocalProbeArrayStrategy(final String className, final long classId,
+                            final int probeCount,
+                            final IExecutionDataAccessorGenerator accessorGenerator) {
+        this.className = className;
+        this.classId = classId;
+        this.probeCount = probeCount;
+        this.accessorGenerator = accessorGenerator;
+    }
 
-	public int storeInstance(final MethodVisitor mv, final boolean clinit,
-			final int variable) {
-		final int maxStack = accessorGenerator.generateDataAccessor(classId,
-				className, probeCount, mv);
-		mv.visitVarInsn(Opcodes.ASTORE, variable);
-		return maxStack;
-	}
+    public int storeInstance(final MethodVisitor mv, final boolean clinit,
+                             final int variable) {
+        final int maxStack = accessorGenerator.generateDataAccessor(classId,
+                className, probeCount, mv);
+        mv.visitVarInsn(Opcodes.ASTORE, variable);
+        return maxStack;
+    }
 
-	public void addMembers(final ClassVisitor delegate, final int probeCount) {
-		// nothing to do
-	}
+    public void addMembers(final ClassVisitor delegate, final int probeCount) {
+        // nothing to do
+    }
 
 }

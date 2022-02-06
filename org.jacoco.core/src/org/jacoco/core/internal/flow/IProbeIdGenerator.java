@@ -17,11 +17,11 @@ package org.jacoco.core.internal.flow;
  */
 public interface IProbeIdGenerator {
 
-	/**
-	 * Returns the next unique probe id.
-	 *
-	 * @return unique probe id
-	 */
-	int nextId();
+    /**
+     * Returns the next unique probe id.
+     *
+     * @return unique probe id
+     */
+    int nextId();
 
 }

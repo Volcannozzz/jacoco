@@ -19,12 +19,11 @@ package org.jacoco.core.data;
  */
 public interface IExecutionDataVisitor {
 
-	/**
-	 * Provides execution data for a class.
-	 *
-	 * @param data
-	 *            execution data for a class
-	 */
-	void visitClassExecution(ExecutionData data);
+    /**
+     * Provides execution data for a class.
+     *
+     * @param data execution data for a class
+     */
+    void visitClassExecution(ExecutionData data);
 
 }

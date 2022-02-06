@@ -13,17 +13,12 @@
  *******************************************************************************/
 package org.jacoco.ant;
 
-import static java.lang.String.format;
+import org.apache.tools.ant.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.RuntimeConfigurable;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.TaskContainer;
-import org.apache.tools.ant.UnknownElement;
+import static java.lang.String.format;
 
 /**
  * Container task to run Java/JUnit tasks with the JaCoCo agent jar. Coverage
@@ -35,166 +30,163 @@ import org.apache.tools.ant.UnknownElement;
  * </ul>
  */
 public class CoverageTask extends AbstractCoverageTask
-		implements TaskContainer {
+        implements TaskContainer {
 
-	private final Collection<TaskEnhancer> taskEnhancers = new ArrayList<TaskEnhancer>();
-	private Task childTask;
+    private final Collection<TaskEnhancer> taskEnhancers = new ArrayList<TaskEnhancer>();
+    private Task childTask;
 
-	/**
-	 * Creates a new default coverage task
-	 */
-	public CoverageTask() {
-		super();
-		taskEnhancers.add(new JavaLikeTaskEnhancer("java"));
-		taskEnhancers.add(new JavaLikeTaskEnhancer("junit"));
-		taskEnhancers.add(new TestNGTaskEnhancer("testng"));
-	}
+    /**
+     * Creates a new default coverage task
+     */
+    public CoverageTask() {
+        super();
+        taskEnhancers.add(new JavaLikeTaskEnhancer("java"));
+        taskEnhancers.add(new JavaLikeTaskEnhancer("junit"));
+        taskEnhancers.add(new TestNGTaskEnhancer("testng"));
+    }
 
-	/**
-	 * Add child task to this container and reconfigure it to run with coverage
-	 * enabled
-	 */
-	public void addTask(final Task task) {
-		if (childTask != null) {
-			throw new BuildException(
-					"Only one child task can be supplied to the coverge task",
-					getLocation());
-		}
+    /**
+     * Add child task to this container and reconfigure it to run with coverage
+     * enabled
+     */
+    public void addTask(final Task task) {
+        if (childTask != null) {
+            throw new BuildException(
+                    "Only one child task can be supplied to the coverge task",
+                    getLocation());
+        }
 
-		this.childTask = task;
+        this.childTask = task;
 
-		final String subTaskTypeName = task.getTaskType();
+        final String subTaskTypeName = task.getTaskType();
 
-		final TaskEnhancer enhancer = findEnhancerForTask(subTaskTypeName);
-		if (enhancer == null) {
-			throw new BuildException(
-					format("%s is not a valid child of the coverage task",
-							subTaskTypeName),
-					getLocation());
-		}
+        final TaskEnhancer enhancer = findEnhancerForTask(subTaskTypeName);
+        if (enhancer == null) {
+            throw new BuildException(
+                    format("%s is not a valid child of the coverage task",
+                            subTaskTypeName),
+                    getLocation());
+        }
 
-		if (isEnabled()) {
-			log(format("Enhancing %s with coverage", childTask.getTaskName()));
-			enhancer.enhanceTask(task);
-		}
+        if (isEnabled()) {
+            log(format("Enhancing %s with coverage", childTask.getTaskName()));
+            enhancer.enhanceTask(task);
+        }
 
-		task.maybeConfigure();
-	}
+        task.maybeConfigure();
+    }
 
-	private TaskEnhancer findEnhancerForTask(final String taskName) {
-		for (final TaskEnhancer enhancer : taskEnhancers) {
-			if (enhancer.supportsTask(taskName)) {
-				return enhancer;
-			}
-		}
+    private TaskEnhancer findEnhancerForTask(final String taskName) {
+        for (final TaskEnhancer enhancer : taskEnhancers) {
+            if (enhancer.supportsTask(taskName)) {
+                return enhancer;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Executes subtask and performs any required cleanup
-	 */
-	@Override
-	public void execute() throws BuildException {
-		if (childTask == null) {
-			throw new BuildException(
-					"A child task must be supplied for the coverage task",
-					getLocation());
-		}
+    /**
+     * Executes subtask and performs any required cleanup
+     */
+    @Override
+    public void execute() throws BuildException {
+        if (childTask == null) {
+            throw new BuildException(
+                    "A child task must be supplied for the coverage task",
+                    getLocation());
+        }
 
-		childTask.execute();
-	}
+        childTask.execute();
+    }
 
-	/**
-	 * Task enhancer for TestNG. TestNG task always run in a forked VM and has
-	 * nested jvmargs elements
-	 */
-	private class TestNGTaskEnhancer extends JavaLikeTaskEnhancer {
+    /**
+     * The task enhancer is responsible for potentially reconfiguring a task to
+     * support running with code coverage enabled
+     */
+    private interface TaskEnhancer {
+        /**
+         * @param taskname Task type to enhance
+         * @return <code>true</code> if this enhancer is capable of enhancing
+         * the requested task type
+         */
+        boolean supportsTask(String taskname);
 
-		public TestNGTaskEnhancer(final String supportedTaskName) {
-			super(supportedTaskName);
-		}
+        /**
+         * Attempt to enhance the supplied task with coverage information. This
+         * operation may fail if the task is being executed in the current VM
+         *
+         * @param task Task instance to enhance (usually an
+         *             {@link UnknownElement})
+         * @throws BuildException Thrown if this enhancer can handle this type of task, but
+         *                        this instance can not be enhanced for some reason.
+         */
+        void enhanceTask(Task task) throws BuildException;
+    }
 
-		@Override
-		public void enhanceTask(final Task task) {
-			addJvmArgs(task);
-		}
+    /**
+     * Task enhancer for TestNG. TestNG task always run in a forked VM and has
+     * nested jvmargs elements
+     */
+    private class TestNGTaskEnhancer extends JavaLikeTaskEnhancer {
 
-	}
+        public TestNGTaskEnhancer(final String supportedTaskName) {
+            super(supportedTaskName);
+        }
 
-	/**
-	 * Basic task enhancer that can handle all 'java like' tasks. That is, tasks
-	 * that have a top level fork attribute and nested jvmargs elements
-	 */
-	private class JavaLikeTaskEnhancer implements TaskEnhancer {
+        @Override
+        public void enhanceTask(final Task task) {
+            addJvmArgs(task);
+        }
 
-		private final String supportedTaskName;
+    }
 
-		public JavaLikeTaskEnhancer(final String supportedTaskName) {
-			this.supportedTaskName = supportedTaskName;
-		}
+    /**
+     * Basic task enhancer that can handle all 'java like' tasks. That is, tasks
+     * that have a top level fork attribute and nested jvmargs elements
+     */
+    private class JavaLikeTaskEnhancer implements TaskEnhancer {
 
-		public boolean supportsTask(final String taskname) {
-			return taskname.equals(supportedTaskName);
-		}
+        private final String supportedTaskName;
 
-		public void enhanceTask(final Task task) {
-			final RuntimeConfigurable configurableWrapper = task
-					.getRuntimeConfigurableWrapper();
+        public JavaLikeTaskEnhancer(final String supportedTaskName) {
+            this.supportedTaskName = supportedTaskName;
+        }
 
-			final String forkValue = getProject().replaceProperties(
-					(String) configurableWrapper.getAttributeMap().get("fork"));
+        public boolean supportsTask(final String taskname) {
+            return taskname.equals(supportedTaskName);
+        }
 
-			if (!Project.toBoolean(forkValue)) {
-				throw new BuildException(
-						"Coverage can only be applied on a forked VM",
-						getLocation());
-			}
+        public void enhanceTask(final Task task) {
+            final RuntimeConfigurable configurableWrapper = task
+                    .getRuntimeConfigurableWrapper();
 
-			addJvmArgs(task);
-		}
+            final String forkValue = getProject().replaceProperties(
+                    (String) configurableWrapper.getAttributeMap().get("fork"));
 
-		public void addJvmArgs(final Task task) {
-			final UnknownElement el = new UnknownElement("jvmarg");
-			el.setTaskName("jvmarg");
-			el.setQName("jvmarg");
+            if (!Project.toBoolean(forkValue)) {
+                throw new BuildException(
+                        "Coverage can only be applied on a forked VM",
+                        getLocation());
+            }
 
-			final RuntimeConfigurable runtimeConfigurableWrapper = el
-					.getRuntimeConfigurableWrapper();
-			runtimeConfigurableWrapper.setAttribute("value",
-					getLaunchingArgument());
+            addJvmArgs(task);
+        }
 
-			task.getRuntimeConfigurableWrapper()
-					.addChild(runtimeConfigurableWrapper);
+        public void addJvmArgs(final Task task) {
+            final UnknownElement el = new UnknownElement("jvmarg");
+            el.setTaskName("jvmarg");
+            el.setQName("jvmarg");
 
-			((UnknownElement) task).addChild(el);
-		}
-	}
+            final RuntimeConfigurable runtimeConfigurableWrapper = el
+                    .getRuntimeConfigurableWrapper();
+            runtimeConfigurableWrapper.setAttribute("value",
+                    getLaunchingArgument());
 
-	/**
-	 * The task enhancer is responsible for potentially reconfiguring a task to
-	 * support running with code coverage enabled
-	 */
-	private interface TaskEnhancer {
-		/**
-		 * @param taskname
-		 *            Task type to enhance
-		 * @return <code>true</code> if this enhancer is capable of enhancing
-		 *         the requested task type
-		 */
-		boolean supportsTask(String taskname);
+            task.getRuntimeConfigurableWrapper()
+                    .addChild(runtimeConfigurableWrapper);
 
-		/**
-		 * Attempt to enhance the supplied task with coverage information. This
-		 * operation may fail if the task is being executed in the current VM
-		 *
-		 * @param task
-		 *            Task instance to enhance (usually an
-		 *            {@link UnknownElement})
-		 * @throws BuildException
-		 *             Thrown if this enhancer can handle this type of task, but
-		 *             this instance can not be enhanced for some reason.
-		 */
-		void enhanceTask(Task task) throws BuildException;
-	}
+            ((UnknownElement) task).addChild(el);
+        }
+    }
 }

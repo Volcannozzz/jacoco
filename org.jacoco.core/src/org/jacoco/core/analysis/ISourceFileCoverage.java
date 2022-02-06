@@ -18,11 +18,11 @@ package org.jacoco.core.analysis;
  */
 public interface ISourceFileCoverage extends ISourceNode {
 
-	/**
-	 * Returns the VM name of the package the source file belongs to.
-	 *
-	 * @return package name
-	 */
-	String getPackageName();
+    /**
+     * Returns the VM name of the package the source file belongs to.
+     *
+     * @return package name
+     */
+    String getPackageName();
 
 }

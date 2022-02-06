@@ -19,45 +19,45 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public final class Filters implements IFilter {
 
-	/**
-	 * Filter that does nothing.
-	 */
-	public static final IFilter NONE = new Filters();
+    /**
+     * Filter that does nothing.
+     */
+    public static final IFilter NONE = new Filters();
 
-	private final IFilter[] filters;
+    private final IFilter[] filters;
 
-	/**
-	 * Creates filter that combines all other filters.
-	 *
-	 * @return filter that combines all other filters
-	 */
-	public static IFilter all() {
-		return new Filters(new EnumFilter(), new SyntheticFilter(),
-				new BridgeFilter(), new SynchronizedFilter(),
-				new TryWithResourcesJavac11Filter(),
-				new TryWithResourcesJavacFilter(),
-				new TryWithResourcesEcjFilter(), new FinallyFilter(),
-				new PrivateEmptyNoArgConstructorFilter(),
-				new StringSwitchJavacFilter(), new StringSwitchFilter(),
-				new EnumEmptyConstructorFilter(), new RecordsFilter(),
-				new AnnotationGeneratedFilter(), new KotlinGeneratedFilter(),
-				new KotlinLateinitFilter(), new KotlinWhenFilter(),
-				new KotlinWhenStringFilter(),
-				new KotlinUnsafeCastOperatorFilter(),
-				new KotlinNotNullOperatorFilter(),
-				new KotlinDefaultArgumentsFilter(), new KotlinInlineFilter(),
-				new KotlinCoroutineFilter(), new KotlinDefaultMethodsFilter());
-	}
+    private Filters(final IFilter... filters) {
+        this.filters = filters;
+    }
 
-	private Filters(final IFilter... filters) {
-		this.filters = filters;
-	}
+    /**
+     * Creates filter that combines all other filters.
+     *
+     * @return filter that combines all other filters
+     */
+    public static IFilter all() {
+        return new Filters(new EnumFilter(), new SyntheticFilter(),
+                new BridgeFilter(), new SynchronizedFilter(),
+                new TryWithResourcesJavac11Filter(),
+                new TryWithResourcesJavacFilter(),
+                new TryWithResourcesEcjFilter(), new FinallyFilter(),
+                new PrivateEmptyNoArgConstructorFilter(),
+                new StringSwitchJavacFilter(), new StringSwitchFilter(),
+                new EnumEmptyConstructorFilter(), new RecordsFilter(),
+                new AnnotationGeneratedFilter(), new KotlinGeneratedFilter(),
+                new KotlinLateinitFilter(), new KotlinWhenFilter(),
+                new KotlinWhenStringFilter(),
+                new KotlinUnsafeCastOperatorFilter(),
+                new KotlinNotNullOperatorFilter(),
+                new KotlinDefaultArgumentsFilter(), new KotlinInlineFilter(),
+                new KotlinCoroutineFilter(), new KotlinDefaultMethodsFilter());
+    }
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
-		for (final IFilter filter : filters) {
-			filter.filter(methodNode, context, output);
-		}
-	}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
+        for (final IFilter filter : filters) {
+            filter.filter(methodNode, context, output);
+        }
+    }
 
 }

@@ -20,15 +20,15 @@ import org.kohsuke.args4j.CmdLineParser;
  */
 public class CommandParser extends CmdLineParser {
 
-	private final Command command;
+    private final Command command;
 
-	CommandParser(final Command command) {
-		super(command);
-		this.command = command;
-	}
+    CommandParser(final Command command) {
+        super(command);
+        this.command = command;
+    }
 
-	Command getCommand() {
-		return command;
-	}
+    Command getCommand() {
+        return command;
+    }
 
 }

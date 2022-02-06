@@ -20,11 +20,11 @@ import org.jacoco.report.internal.html.ILinkable;
  */
 public interface ITableItem extends ILinkable {
 
-	/**
-	 * Returns the corresponding node data.
-	 *
-	 * @return node data
-	 */
-	ICoverageNode getNode();
+    /**
+     * Returns the corresponding node data.
+     *
+     * @return node data
+     */
+    ICoverageNode getNode();
 
 }

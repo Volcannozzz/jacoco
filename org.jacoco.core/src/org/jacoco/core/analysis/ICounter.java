@@ -18,103 +18,108 @@ package org.jacoco.core.analysis;
  */
 public interface ICounter {
 
-	/**
-	 * Different values provided by a counter.
-	 */
-	enum CounterValue {
+    /**
+     * Status flag for no items (value is 0x00).
+     */
+    int EMPTY = 0x00;
+    /**
+     * Status flag when all items are not covered (value is 0x01).
+     */
+    int NOT_COVERED = 0x01;
+    /**
+     * Status flag when all items are covered (value is 0x02).
+     */
+    int FULLY_COVERED = 0x02;
+    /**
+     * Status flag when items are partly covered (value is 0x03).
+     */
+    int PARTLY_COVERED = NOT_COVERED | FULLY_COVERED;
 
-		/** Total number of items */
-		TOTALCOUNT,
+    /**
+     * Returns the counter value of the given type.
+     *
+     * @param value value type to return
+     * @return counter value
+     */
+    double getValue(CounterValue value);
 
-		/** Number of missed items */
-		MISSEDCOUNT,
+    /**
+     * Returns the total count of items.
+     *
+     * @return total count of items
+     */
+    int getTotalCount();
 
-		/** Number of covered items */
-		COVEREDCOUNT,
+    /**
+     * Returns the count of covered items.
+     *
+     * @return count of covered items
+     */
+    int getCoveredCount();
 
-		/** Ratio of missed to total items */
-		MISSEDRATIO,
+    /**
+     * Returns the count of missed items.
+     *
+     * @return count of missed items
+     */
+    int getMissedCount();
 
-		/** Ratio of covered to total items */
-		COVEREDRATIO
-	}
+    /**
+     * Calculates the ratio of covered to total count items. If total count
+     * items is 0 this method returns NaN.
+     *
+     * @return ratio of covered to total count items
+     */
+    double getCoveredRatio();
 
-	/**
-	 * Status flag for no items (value is 0x00).
-	 */
-	int EMPTY = 0x00;
+    /**
+     * Calculates the ratio of missed to total count items. If total count items
+     * is 0 this method returns NaN.
+     *
+     * @return ratio of missed to total count items
+     */
+    double getMissedRatio();
 
-	/**
-	 * Status flag when all items are not covered (value is 0x01).
-	 */
-	int NOT_COVERED = 0x01;
+    /**
+     * Returns the coverage status of this counter.
+     *
+     * @return status of this line
+     * @see ICounter#EMPTY
+     * @see ICounter#NOT_COVERED
+     * @see ICounter#PARTLY_COVERED
+     * @see ICounter#FULLY_COVERED
+     */
+    int getStatus();
 
-	/**
-	 * Status flag when all items are covered (value is 0x02).
-	 */
-	int FULLY_COVERED = 0x02;
+    /**
+     * Different values provided by a counter.
+     */
+    enum CounterValue {
 
-	/**
-	 * Status flag when items are partly covered (value is 0x03).
-	 */
-	int PARTLY_COVERED = NOT_COVERED | FULLY_COVERED;
+        /**
+         * Total number of items
+         */
+        TOTALCOUNT,
 
-	/**
-	 * Returns the counter value of the given type.
-	 *
-	 * @param value
-	 *            value type to return
-	 * @return counter value
-	 */
-	double getValue(CounterValue value);
+        /**
+         * Number of missed items
+         */
+        MISSEDCOUNT,
 
-	/**
-	 * Returns the total count of items.
-	 *
-	 * @return total count of items
-	 */
-	int getTotalCount();
+        /**
+         * Number of covered items
+         */
+        COVEREDCOUNT,
 
-	/**
-	 * Returns the count of covered items.
-	 *
-	 * @return count of covered items
-	 */
-	int getCoveredCount();
+        /**
+         * Ratio of missed to total items
+         */
+        MISSEDRATIO,
 
-	/**
-	 * Returns the count of missed items.
-	 *
-	 * @return count of missed items
-	 */
-	int getMissedCount();
-
-	/**
-	 * Calculates the ratio of covered to total count items. If total count
-	 * items is 0 this method returns NaN.
-	 *
-	 * @return ratio of covered to total count items
-	 */
-	double getCoveredRatio();
-
-	/**
-	 * Calculates the ratio of missed to total count items. If total count items
-	 * is 0 this method returns NaN.
-	 *
-	 * @return ratio of missed to total count items
-	 */
-	double getMissedRatio();
-
-	/**
-	 * Returns the coverage status of this counter.
-	 *
-	 * @see ICounter#EMPTY
-	 * @see ICounter#NOT_COVERED
-	 * @see ICounter#PARTLY_COVERED
-	 * @see ICounter#FULLY_COVERED
-	 *
-	 * @return status of this line
-	 */
-	int getStatus();
+        /**
+         * Ratio of covered to total items
+         */
+        COVEREDRATIO
+    }
 
 }

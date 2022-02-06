@@ -25,38 +25,38 @@ import org.jacoco.report.internal.html.table.ITableItem;
  */
 final class MethodItem implements ITableItem {
 
-	private final IMethodCoverage node;
+    private final IMethodCoverage node;
 
-	private final String label;
+    private final String label;
 
-	private final ILinkable sourcePage;
+    private final ILinkable sourcePage;
 
-	MethodItem(final IMethodCoverage node, final String label,
-			final ILinkable sourcePage) {
-		this.node = node;
-		this.label = label;
-		this.sourcePage = sourcePage;
-	}
+    MethodItem(final IMethodCoverage node, final String label,
+               final ILinkable sourcePage) {
+        this.node = node;
+        this.label = label;
+        this.sourcePage = sourcePage;
+    }
 
-	public String getLinkLabel() {
-		return label;
-	}
+    public String getLinkLabel() {
+        return label;
+    }
 
-	public String getLinkStyle() {
-		return Styles.EL_METHOD;
-	}
+    public String getLinkStyle() {
+        return Styles.EL_METHOD;
+    }
 
-	public String getLink(final ReportOutputFolder base) {
-		if (sourcePage == null) {
-			return null;
-		}
-		final String link = sourcePage.getLink(base);
-		final int first = node.getFirstLine();
-		return first != ISourceNode.UNKNOWN_LINE ? link + "#L" + first : link;
-	}
+    public String getLink(final ReportOutputFolder base) {
+        if (sourcePage == null) {
+            return null;
+        }
+        final String link = sourcePage.getLink(base);
+        final int first = node.getFirstLine();
+        return first != ISourceNode.UNKNOWN_LINE ? link + "#L" + first : link;
+    }
 
-	public ICoverageNode getNode() {
-		return node;
-	}
+    public ICoverageNode getNode() {
+        return node;
+    }
 
 }

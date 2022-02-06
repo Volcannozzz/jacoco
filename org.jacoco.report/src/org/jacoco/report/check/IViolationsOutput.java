@@ -16,23 +16,18 @@ import org.jacoco.core.analysis.ICoverageNode;
 
 /**
  * Call-back interface which is used to report rule violations to.
- *
  */
 public interface IViolationsOutput {
 
-	/**
-	 * Called for every rule violation.
-	 *
-	 * @param node
-	 *            node which violates a rule
-	 * @param rule
-	 *            rule which is violated
-	 * @param limit
-	 *            limit which is violated
-	 * @param message
-	 *            readable message describing this violation
-	 */
-	void onViolation(ICoverageNode node, Rule rule, Limit limit,
-			String message);
+    /**
+     * Called for every rule violation.
+     *
+     * @param node    node which violates a rule
+     * @param rule    rule which is violated
+     * @param limit   limit which is violated
+     * @param message readable message describing this violation
+     */
+    void onViolation(ICoverageNode node, Rule rule, Limit limit,
+                     String message);
 
 }

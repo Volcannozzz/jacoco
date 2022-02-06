@@ -19,41 +19,40 @@ import java.io.IOException;
  */
 public class IncompatibleExecDataVersionException extends IOException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final int actualVersion;
+    private final int actualVersion;
 
-	/**
-	 * Creates a new exception to flag version mismatches in execution data.
-	 *
-	 * @param actualVersion
-	 *            version found in the exec data
-	 */
-	public IncompatibleExecDataVersionException(final int actualVersion) {
-		super(String.format("Cannot read execution data version 0x%x. "
-				+ "This version of JaCoCo uses execution data version 0x%x.",
-				Integer.valueOf(actualVersion),
-				Integer.valueOf(ExecutionDataWriter.FORMAT_VERSION)));
-		this.actualVersion = actualVersion;
-	}
+    /**
+     * Creates a new exception to flag version mismatches in execution data.
+     *
+     * @param actualVersion version found in the exec data
+     */
+    public IncompatibleExecDataVersionException(final int actualVersion) {
+        super(String.format("Cannot read execution data version 0x%x. "
+                        + "This version of JaCoCo uses execution data version 0x%x.",
+                Integer.valueOf(actualVersion),
+                Integer.valueOf(ExecutionDataWriter.FORMAT_VERSION)));
+        this.actualVersion = actualVersion;
+    }
 
-	/**
-	 * Gets the version expected in the execution data which can be read by this
-	 * version of JaCoCo.
-	 *
-	 * @return expected version in execution data
-	 */
-	public int getExpectedVersion() {
-		return ExecutionDataWriter.FORMAT_VERSION;
-	}
+    /**
+     * Gets the version expected in the execution data which can be read by this
+     * version of JaCoCo.
+     *
+     * @return expected version in execution data
+     */
+    public int getExpectedVersion() {
+        return ExecutionDataWriter.FORMAT_VERSION;
+    }
 
-	/**
-	 * Gets the actual version found in the execution data.
-	 *
-	 * @return actual version in execution data
-	 */
-	public int getActualVersion() {
-		return actualVersion;
-	}
+    /**
+     * Gets the actual version found in the execution data.
+     *
+     * @return actual version in execution data
+     */
+    public int getActualVersion() {
+        return actualVersion;
+    }
 
 }

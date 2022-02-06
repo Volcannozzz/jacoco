@@ -23,67 +23,67 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public final class RecordsFilter implements IFilter {
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
-		if (!"java/lang/Record".equals(context.getSuperClassName())) {
-			return;
-		}
-		final Matcher matcher = new Matcher();
-		if (matcher.isEquals(methodNode) || matcher.isHashCode(methodNode)
-				|| matcher.isToString(methodNode)) {
-			output.ignore(methodNode.instructions.getFirst(),
-					methodNode.instructions.getLast());
-		}
-	}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
+        if (!"java/lang/Record".equals(context.getSuperClassName())) {
+            return;
+        }
+        final Matcher matcher = new Matcher();
+        if (matcher.isEquals(methodNode) || matcher.isHashCode(methodNode)
+                || matcher.isToString(methodNode)) {
+            output.ignore(methodNode.instructions.getFirst(),
+                    methodNode.instructions.getLast());
+        }
+    }
 
-	private static class Matcher extends AbstractMatcher {
-		boolean isToString(final MethodNode m) {
-			if (!"toString".equals(m.name)
-					|| !"()Ljava/lang/String;".equals(m.desc)) {
-				return false;
-			}
-			firstIsALoad0(m);
-			nextIsInvokeDynamic("toString");
-			nextIs(Opcodes.ARETURN);
-			return cursor != null;
-		}
+    private static class Matcher extends AbstractMatcher {
+        boolean isToString(final MethodNode m) {
+            if (!"toString".equals(m.name)
+                    || !"()Ljava/lang/String;".equals(m.desc)) {
+                return false;
+            }
+            firstIsALoad0(m);
+            nextIsInvokeDynamic("toString");
+            nextIs(Opcodes.ARETURN);
+            return cursor != null;
+        }
 
-		boolean isHashCode(final MethodNode m) {
-			if (!"hashCode".equals(m.name) || !"()I".equals(m.desc)) {
-				return false;
-			}
-			firstIsALoad0(m);
-			nextIsInvokeDynamic("hashCode");
-			nextIs(Opcodes.IRETURN);
-			return cursor != null;
-		}
+        boolean isHashCode(final MethodNode m) {
+            if (!"hashCode".equals(m.name) || !"()I".equals(m.desc)) {
+                return false;
+            }
+            firstIsALoad0(m);
+            nextIsInvokeDynamic("hashCode");
+            nextIs(Opcodes.IRETURN);
+            return cursor != null;
+        }
 
-		boolean isEquals(final MethodNode m) {
-			if (!"equals".equals(m.name)
-					|| !"(Ljava/lang/Object;)Z".equals(m.desc)) {
-				return false;
-			}
-			firstIsALoad0(m);
-			nextIs(Opcodes.ALOAD);
-			nextIsInvokeDynamic("equals");
-			nextIs(Opcodes.IRETURN);
-			return cursor != null;
-		}
+        boolean isEquals(final MethodNode m) {
+            if (!"equals".equals(m.name)
+                    || !"(Ljava/lang/Object;)Z".equals(m.desc)) {
+                return false;
+            }
+            firstIsALoad0(m);
+            nextIs(Opcodes.ALOAD);
+            nextIsInvokeDynamic("equals");
+            nextIs(Opcodes.IRETURN);
+            return cursor != null;
+        }
 
-		private void nextIsInvokeDynamic(final String name) {
-			nextIs(Opcodes.INVOKEDYNAMIC);
-			if (cursor == null) {
-				return;
-			}
-			final InvokeDynamicInsnNode i = (InvokeDynamicInsnNode) cursor;
-			final Handle bsm = i.bsm;
-			if (name.equals(i.name)
-					&& "java/lang/runtime/ObjectMethods".equals(bsm.getOwner())
-					&& "bootstrap".equals(bsm.getName())) {
-				return;
-			}
-			cursor = null;
-		}
-	}
+        private void nextIsInvokeDynamic(final String name) {
+            nextIs(Opcodes.INVOKEDYNAMIC);
+            if (cursor == null) {
+                return;
+            }
+            final InvokeDynamicInsnNode i = (InvokeDynamicInsnNode) cursor;
+            final Handle bsm = i.bsm;
+            if (name.equals(i.name)
+                    && "java/lang/runtime/ObjectMethods".equals(bsm.getOwner())
+                    && "bootstrap".equals(bsm.getName())) {
+                return;
+            }
+            cursor = null;
+        }
+    }
 
 }

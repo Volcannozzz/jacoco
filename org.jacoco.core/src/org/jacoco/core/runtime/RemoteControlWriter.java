@@ -12,51 +12,52 @@
  *******************************************************************************/
 package org.jacoco.core.runtime;
 
+import org.jacoco.core.data.ExecutionDataWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.jacoco.core.data.ExecutionDataWriter;
 
 /**
  * {@link ExecutionDataWriter} with commands added for runtime remote control.
  */
 public class RemoteControlWriter extends ExecutionDataWriter
-		implements IRemoteCommandVisitor {
+        implements IRemoteCommandVisitor {
 
-	/** Block identifier to confirm successful command execution. */
-	public static final byte BLOCK_CMDOK = 0x20;
+    /**
+     * Block identifier to confirm successful command execution.
+     */
+    public static final byte BLOCK_CMDOK = 0x20;
 
-	/** Block identifier for dump command */
-	public static final byte BLOCK_CMDDUMP = 0x40;
+    /**
+     * Block identifier for dump command
+     */
+    public static final byte BLOCK_CMDDUMP = 0x40;
 
-	/**
-	 * Creates a new writer based on the given output stream.
-	 *
-	 * @param output
-	 *            stream to write commands to
-	 * @throws IOException
-	 *             if the header can't be written
-	 */
-	public RemoteControlWriter(final OutputStream output) throws IOException {
-		super(output);
-	}
+    /**
+     * Creates a new writer based on the given output stream.
+     *
+     * @param output stream to write commands to
+     * @throws IOException if the header can't be written
+     */
+    public RemoteControlWriter(final OutputStream output) throws IOException {
+        super(output);
+    }
 
-	/**
-	 * Sends a confirmation that a commands has been successfully executed and
-	 * the response is completed.
-	 *
-	 * @throws IOException
-	 *             in case of problems with the remote connection
-	 */
-	public void sendCmdOk() throws IOException {
-		out.writeByte(RemoteControlWriter.BLOCK_CMDOK);
-	}
+    /**
+     * Sends a confirmation that a commands has been successfully executed and
+     * the response is completed.
+     *
+     * @throws IOException in case of problems with the remote connection
+     */
+    public void sendCmdOk() throws IOException {
+        out.writeByte(RemoteControlWriter.BLOCK_CMDOK);
+    }
 
-	public void visitDumpCommand(final boolean dump, final boolean reset)
-			throws IOException {
-		out.writeByte(RemoteControlWriter.BLOCK_CMDDUMP);
-		out.writeBoolean(dump);
-		out.writeBoolean(reset);
-	}
+    public void visitDumpCommand(final boolean dump, final boolean reset)
+            throws IOException {
+        out.writeByte(RemoteControlWriter.BLOCK_CMDDUMP);
+        out.writeBoolean(dump);
+        out.writeBoolean(reset);
+    }
 
 }

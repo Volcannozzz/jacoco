@@ -18,32 +18,33 @@ package org.jacoco.core.analysis;
  */
 public interface ISourceNode extends ICoverageNode {
 
-	/** Place holder for unknown lines (no debug information) */
-	int UNKNOWN_LINE = -1;
+    /**
+     * Place holder for unknown lines (no debug information)
+     */
+    int UNKNOWN_LINE = -1;
 
-	/**
-	 * The number of the first line coverage information is available for. If no
-	 * line is contained, the method returns -1.
-	 *
-	 * @return number of the first line or {@link #UNKNOWN_LINE}
-	 */
-	int getFirstLine();
+    /**
+     * The number of the first line coverage information is available for. If no
+     * line is contained, the method returns -1.
+     *
+     * @return number of the first line or {@link #UNKNOWN_LINE}
+     */
+    int getFirstLine();
 
-	/**
-	 * The number of the last line coverage information is available for. If no
-	 * line is contained, the method returns -1.
-	 *
-	 * @return number of the last line or {@link #UNKNOWN_LINE}
-	 */
-	int getLastLine();
+    /**
+     * The number of the last line coverage information is available for. If no
+     * line is contained, the method returns -1.
+     *
+     * @return number of the last line or {@link #UNKNOWN_LINE}
+     */
+    int getLastLine();
 
-	/**
-	 * Returns the line information for given line.
-	 *
-	 * @param nr
-	 *            line number of interest
-	 * @return line information
-	 */
-	ILine getLine(int nr);
+    /**
+     * Returns the line information for given line.
+     *
+     * @param nr line number of interest
+     * @return line information
+     */
+    ILine getLine(int nr);
 
 }

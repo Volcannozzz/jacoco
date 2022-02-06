@@ -24,36 +24,35 @@ import org.objectweb.asm.Opcodes;
  * only.
  */
 public class OfflineInstrumentationAccessGenerator
-		implements IExecutionDataAccessorGenerator {
+        implements IExecutionDataAccessorGenerator {
 
-	private final String runtimeClassName;
+    private final String runtimeClassName;
 
-	/**
-	 * Creates a new instance for offline instrumentation.
-	 */
-	public OfflineInstrumentationAccessGenerator() {
-		this(JaCoCo.RUNTIMEPACKAGE.replace('.', '/') + "/Offline");
-	}
+    /**
+     * Creates a new instance for offline instrumentation.
+     */
+    public OfflineInstrumentationAccessGenerator() {
+        this(JaCoCo.RUNTIMEPACKAGE.replace('.', '/') + "/Offline");
+    }
 
-	/**
-	 * Creates a new instance with the given runtime class name for testing
-	 * purposes
-	 *
-	 * @param runtimeClassName
-	 *            VM name of the runtime class
-	 */
-	OfflineInstrumentationAccessGenerator(final String runtimeClassName) {
-		this.runtimeClassName = runtimeClassName;
-	}
+    /**
+     * Creates a new instance with the given runtime class name for testing
+     * purposes
+     *
+     * @param runtimeClassName VM name of the runtime class
+     */
+    OfflineInstrumentationAccessGenerator(final String runtimeClassName) {
+        this.runtimeClassName = runtimeClassName;
+    }
 
-	public int generateDataAccessor(final long classid, final String classname,
-			final int probecount, final MethodVisitor mv) {
-		mv.visitLdcInsn(Long.valueOf(classid));
-		mv.visitLdcInsn(classname);
-		InstrSupport.push(mv, probecount);
-		mv.visitMethodInsn(Opcodes.INVOKESTATIC, runtimeClassName, "getProbes",
-				"(JLjava/lang/String;I)[Z", false);
-		return 4;
-	}
+    public int generateDataAccessor(final long classid, final String classname,
+                                    final int probecount, final MethodVisitor mv) {
+        mv.visitLdcInsn(Long.valueOf(classid));
+        mv.visitLdcInsn(classname);
+        InstrSupport.push(mv, probecount);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, runtimeClassName, "getProbes",
+                "(JLjava/lang/String;I)[Z", false);
+        return 4;
+    }
 
 }

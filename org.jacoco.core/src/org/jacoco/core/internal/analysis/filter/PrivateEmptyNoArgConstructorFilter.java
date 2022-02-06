@@ -20,29 +20,29 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public final class PrivateEmptyNoArgConstructorFilter implements IFilter {
 
-	private static final String CONSTRUCTOR_NAME = "<init>";
-	private static final String CONSTRUCTOR_DESC = "()V";
+    private static final String CONSTRUCTOR_NAME = "<init>";
+    private static final String CONSTRUCTOR_DESC = "()V";
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
-		if ((methodNode.access & Opcodes.ACC_PRIVATE) != 0
-				&& CONSTRUCTOR_NAME.equals(methodNode.name)
-				&& CONSTRUCTOR_DESC.equals(methodNode.desc) && new Matcher()
-						.match(methodNode, context.getSuperClassName())) {
-			output.ignore(methodNode.instructions.getFirst(),
-					methodNode.instructions.getLast());
-		}
-	}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
+        if ((methodNode.access & Opcodes.ACC_PRIVATE) != 0
+                && CONSTRUCTOR_NAME.equals(methodNode.name)
+                && CONSTRUCTOR_DESC.equals(methodNode.desc) && new Matcher()
+                .match(methodNode, context.getSuperClassName())) {
+            output.ignore(methodNode.instructions.getFirst(),
+                    methodNode.instructions.getLast());
+        }
+    }
 
-	private static class Matcher extends AbstractMatcher {
-		private boolean match(final MethodNode methodNode,
-				final String superClassName) {
-			firstIsALoad0(methodNode);
-			nextIsInvoke(Opcodes.INVOKESPECIAL, superClassName,
-					CONSTRUCTOR_NAME, CONSTRUCTOR_DESC);
-			nextIs(Opcodes.RETURN);
-			return cursor != null;
-		}
-	}
+    private static class Matcher extends AbstractMatcher {
+        private boolean match(final MethodNode methodNode,
+                              final String superClassName) {
+            firstIsALoad0(methodNode);
+            nextIsInvoke(Opcodes.INVOKESPECIAL, superClassName,
+                    CONSTRUCTOR_NAME, CONSTRUCTOR_DESC);
+            nextIs(Opcodes.RETURN);
+            return cursor != null;
+        }
+    }
 
 }

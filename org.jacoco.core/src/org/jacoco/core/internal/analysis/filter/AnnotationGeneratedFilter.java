@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.jacoco.core.internal.analysis.filter;
 
-import java.util.List;
-
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import java.util.List;
 
 /**
  * Filters classes and methods annotated with
@@ -25,41 +25,41 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public final class AnnotationGeneratedFilter implements IFilter {
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
+    private static boolean matches(final String annotation) {
+        final String name = annotation
+                .substring(Math.max(annotation.lastIndexOf('/'),
+                        annotation.lastIndexOf('$')) + 1);
+        return name.contains("Generated");
+    }
 
-		for (String annotation : context.getClassAnnotations()) {
-			if (matches(annotation)) {
-				output.ignore(methodNode.instructions.getFirst(),
-						methodNode.instructions.getLast());
-				return;
-			}
-		}
+    private static boolean presentIn(final List<AnnotationNode> annotations) {
+        if (annotations != null) {
+            for (AnnotationNode annotation : annotations) {
+                if (matches(annotation.desc)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-		if (presentIn(methodNode.invisibleAnnotations)
-				|| presentIn(methodNode.visibleAnnotations)) {
-			output.ignore(methodNode.instructions.getFirst(),
-					methodNode.instructions.getLast());
-		}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
 
-	}
+        for (String annotation : context.getClassAnnotations()) {
+            if (matches(annotation)) {
+                output.ignore(methodNode.instructions.getFirst(),
+                        methodNode.instructions.getLast());
+                return;
+            }
+        }
 
-	private static boolean matches(final String annotation) {
-		final String name = annotation
-				.substring(Math.max(annotation.lastIndexOf('/'),
-						annotation.lastIndexOf('$')) + 1);
-		return name.contains("Generated");
-	}
+        if (presentIn(methodNode.invisibleAnnotations)
+                || presentIn(methodNode.visibleAnnotations)) {
+            output.ignore(methodNode.instructions.getFirst(),
+                    methodNode.instructions.getLast());
+        }
 
-	private static boolean presentIn(final List<AnnotationNode> annotations) {
-		if (annotations != null) {
-			for (AnnotationNode annotation : annotations) {
-				if (matches(annotation.desc)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    }
 
 }

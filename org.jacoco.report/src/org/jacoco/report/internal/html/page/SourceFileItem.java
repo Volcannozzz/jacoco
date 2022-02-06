@@ -20,30 +20,29 @@ import org.jacoco.report.internal.html.table.ITableItem;
 
 /**
  * Table items representing a source file which cannot be linked.
- *
  */
 final class SourceFileItem implements ITableItem {
 
-	private final ICoverageNode node;
+    private final ICoverageNode node;
 
-	SourceFileItem(final ISourceFileCoverage node) {
-		this.node = node;
-	}
+    SourceFileItem(final ISourceFileCoverage node) {
+        this.node = node;
+    }
 
-	public String getLinkLabel() {
-		return node.getName();
-	}
+    public String getLinkLabel() {
+        return node.getName();
+    }
 
-	public String getLinkStyle() {
-		return Styles.EL_SOURCE;
-	}
+    public String getLinkStyle() {
+        return Styles.EL_SOURCE;
+    }
 
-	public String getLink(final ReportOutputFolder base) {
-		return null;
-	}
+    public String getLink(final ReportOutputFolder base) {
+        return null;
+    }
 
-	public ICoverageNode getNode() {
-		return node;
-	}
+    public ICoverageNode getNode() {
+        return node;
+    }
 
 }

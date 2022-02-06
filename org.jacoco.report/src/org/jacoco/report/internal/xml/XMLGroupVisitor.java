@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.jacoco.report.internal.xml;
 
-import java.io.IOException;
-
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.report.ISourceFileLocator;
 import org.jacoco.report.internal.AbstractGroupVisitor;
+
+import java.io.IOException;
 
 /**
  * A {@link org.jacoco.report.IReportGroupVisitor} that transforms the report
@@ -25,43 +25,42 @@ import org.jacoco.report.internal.AbstractGroupVisitor;
  */
 public class XMLGroupVisitor extends AbstractGroupVisitor {
 
-	/** XML element of this group */
-	protected final ReportElement element;
+    /**
+     * XML element of this group
+     */
+    protected final ReportElement element;
 
-	/**
-	 * New handler for a group with the given name.
-	 *
-	 * @param element
-	 *            XML-Element representing this coverage node. The start tag
-	 *            must not be closed yet to allow adding additional attributes.
-	 * @param name
-	 *            name of the group
-	 * @throws IOException
-	 *             in case of problems with the underlying writer
-	 */
-	public XMLGroupVisitor(final ReportElement element, final String name)
-			throws IOException {
-		super(name);
-		this.element = element;
-	}
+    /**
+     * New handler for a group with the given name.
+     *
+     * @param element XML-Element representing this coverage node. The start tag
+     *                must not be closed yet to allow adding additional attributes.
+     * @param name    name of the group
+     * @throws IOException in case of problems with the underlying writer
+     */
+    public XMLGroupVisitor(final ReportElement element, final String name)
+            throws IOException {
+        super(name);
+        this.element = element;
+    }
 
-	@Override
-	protected void handleBundle(final IBundleCoverage bundle,
-			final ISourceFileLocator locator) throws IOException {
-		final ReportElement child = element.group(bundle.getName());
-		XMLCoverageWriter.writeBundle(bundle, child);
-	}
+    @Override
+    protected void handleBundle(final IBundleCoverage bundle,
+                                final ISourceFileLocator locator) throws IOException {
+        final ReportElement child = element.group(bundle.getName());
+        XMLCoverageWriter.writeBundle(bundle, child);
+    }
 
-	@Override
-	protected AbstractGroupVisitor handleGroup(final String name)
-			throws IOException {
-		final ReportElement child = element.group(name);
-		return new XMLGroupVisitor(child, name);
-	}
+    @Override
+    protected AbstractGroupVisitor handleGroup(final String name)
+            throws IOException {
+        final ReportElement child = element.group(name);
+        return new XMLGroupVisitor(child, name);
+    }
 
-	@Override
-	protected void handleEnd() throws IOException {
-		XMLCoverageWriter.writeCounters(total, element);
-	}
+    @Override
+    protected void handleEnd() throws IOException {
+        XMLCoverageWriter.writeCounters(total, element);
+    }
 
 }

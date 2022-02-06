@@ -23,38 +23,38 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class KotlinLateinitFilter implements IFilter {
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
-		final Matcher matcher = new Matcher();
-		for (final AbstractInsnNode node : methodNode.instructions) {
-			matcher.match(node, output);
-		}
-	}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
+        final Matcher matcher = new Matcher();
+        for (final AbstractInsnNode node : methodNode.instructions) {
+            matcher.match(node, output);
+        }
+    }
 
-	private static class Matcher extends AbstractMatcher {
-		public void match(final AbstractInsnNode start,
-				final IFilterOutput output) {
+    private static class Matcher extends AbstractMatcher {
+        public void match(final AbstractInsnNode start,
+                          final IFilterOutput output) {
 
-			if (Opcodes.IFNONNULL != start.getOpcode()) {
-				return;
-			}
-			cursor = start;
+            if (Opcodes.IFNONNULL != start.getOpcode()) {
+                return;
+            }
+            cursor = start;
 
-			nextIs(Opcodes.LDC);
-			nextIsInvoke(Opcodes.INVOKESTATIC, "kotlin/jvm/internal/Intrinsics",
-					"throwUninitializedPropertyAccessException",
-					"(Ljava/lang/String;)V");
+            nextIs(Opcodes.LDC);
+            nextIsInvoke(Opcodes.INVOKESTATIC, "kotlin/jvm/internal/Intrinsics",
+                    "throwUninitializedPropertyAccessException",
+                    "(Ljava/lang/String;)V");
 
-			if (cursor != null
-					&& skipNonOpcodes(cursor.getNext()) != skipNonOpcodes(
-							((JumpInsnNode) start).label)) {
-				nextIs(Opcodes.ACONST_NULL);
-				nextIs(Opcodes.ATHROW);
-			}
+            if (cursor != null
+                    && skipNonOpcodes(cursor.getNext()) != skipNonOpcodes(
+                    ((JumpInsnNode) start).label)) {
+                nextIs(Opcodes.ACONST_NULL);
+                nextIs(Opcodes.ATHROW);
+            }
 
-			if (cursor != null) {
-				output.ignore(start, cursor);
-			}
-		}
-	}
+            if (cursor != null) {
+                output.ignore(start, cursor);
+            }
+        }
+    }
 }

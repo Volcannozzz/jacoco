@@ -24,51 +24,51 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public final class KotlinUnsafeCastOperatorFilter implements IFilter {
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
-		if (!KotlinGeneratedFilter.isKotlinClass(context)) {
-			return;
-		}
-		final Matcher matcher = new Matcher();
-		for (final AbstractInsnNode i : methodNode.instructions) {
-			matcher.match("kotlin/TypeCastException", i, output);
-			// Since Kotlin 1.4.0:
-			matcher.match("java/lang/NullPointerException", i, output);
-		}
-	}
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
+        if (!KotlinGeneratedFilter.isKotlinClass(context)) {
+            return;
+        }
+        final Matcher matcher = new Matcher();
+        for (final AbstractInsnNode i : methodNode.instructions) {
+            matcher.match("kotlin/TypeCastException", i, output);
+            // Since Kotlin 1.4.0:
+            matcher.match("java/lang/NullPointerException", i, output);
+        }
+    }
 
-	private static class Matcher extends AbstractMatcher {
-		public void match(final String exceptionType,
-				final AbstractInsnNode start, final IFilterOutput output) {
+    private static class Matcher extends AbstractMatcher {
+        public void match(final String exceptionType,
+                          final AbstractInsnNode start, final IFilterOutput output) {
 
-			if (Opcodes.IFNONNULL != start.getOpcode()) {
-				return;
-			}
-			cursor = start;
-			final JumpInsnNode jumpInsnNode = (JumpInsnNode) cursor;
-			nextIsType(Opcodes.NEW, exceptionType);
-			nextIs(Opcodes.DUP);
-			nextIs(Opcodes.LDC);
-			if (cursor == null) {
-				return;
-			}
-			final LdcInsnNode ldc = (LdcInsnNode) cursor;
-			if (!(ldc.cst instanceof String && ((String) ldc.cst)
-					.startsWith("null cannot be cast to non-null type"))) {
-				return;
-			}
-			nextIsInvoke(Opcodes.INVOKESPECIAL, exceptionType, "<init>",
-					"(Ljava/lang/String;)V");
-			nextIs(Opcodes.ATHROW);
-			if (cursor == null) {
-				return;
-			}
-			if (cursor.getNext() != jumpInsnNode.label) {
-				return;
-			}
+            if (Opcodes.IFNONNULL != start.getOpcode()) {
+                return;
+            }
+            cursor = start;
+            final JumpInsnNode jumpInsnNode = (JumpInsnNode) cursor;
+            nextIsType(Opcodes.NEW, exceptionType);
+            nextIs(Opcodes.DUP);
+            nextIs(Opcodes.LDC);
+            if (cursor == null) {
+                return;
+            }
+            final LdcInsnNode ldc = (LdcInsnNode) cursor;
+            if (!(ldc.cst instanceof String && ((String) ldc.cst)
+                    .startsWith("null cannot be cast to non-null type"))) {
+                return;
+            }
+            nextIsInvoke(Opcodes.INVOKESPECIAL, exceptionType, "<init>",
+                    "(Ljava/lang/String;)V");
+            nextIs(Opcodes.ATHROW);
+            if (cursor == null) {
+                return;
+            }
+            if (cursor.getNext() != jumpInsnNode.label) {
+                return;
+            }
 
-			output.ignore(start, cursor);
-		}
-	}
+            output.ignore(start, cursor);
+        }
+    }
 
 }

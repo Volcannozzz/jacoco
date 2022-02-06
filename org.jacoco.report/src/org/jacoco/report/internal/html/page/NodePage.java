@@ -22,50 +22,45 @@ import org.jacoco.report.internal.html.table.ITableItem;
 /**
  * Report page that represents a coverage node.
  *
- * @param <NodeType>
- *            type of the node represented by this page
+ * @param <NodeType> type of the node represented by this page
  */
 public abstract class NodePage<NodeType extends ICoverageNode>
-		extends ReportPage implements ITableItem {
+        extends ReportPage implements ITableItem {
 
-	private final NodeType node;
+    private final NodeType node;
 
-	/**
-	 * Creates a new node page.
-	 *
-	 * @param node
-	 *            corresponding node
-	 * @param parent
-	 *            optional hierarchical parent
-	 * @param folder
-	 *            base folder to create this page in
-	 * @param context
-	 *            settings context
-	 */
-	protected NodePage(final NodeType node, final ReportPage parent,
-			final ReportOutputFolder folder, final IHTMLReportContext context) {
-		super(parent, folder, context);
-		this.node = node;
-	}
+    /**
+     * Creates a new node page.
+     *
+     * @param node    corresponding node
+     * @param parent  optional hierarchical parent
+     * @param folder  base folder to create this page in
+     * @param context settings context
+     */
+    protected NodePage(final NodeType node, final ReportPage parent,
+                       final ReportOutputFolder folder, final IHTMLReportContext context) {
+        super(parent, folder, context);
+        this.node = node;
+    }
 
-	// === ILinkable ===
+    // === ILinkable ===
 
-	public String getLinkStyle() {
-		if (isRootPage()) {
-			return Styles.EL_REPORT;
-		} else {
-			return Resources.getElementStyle(node.getElementType());
-		}
-	}
+    public String getLinkStyle() {
+        if (isRootPage()) {
+            return Styles.EL_REPORT;
+        } else {
+            return Resources.getElementStyle(node.getElementType());
+        }
+    }
 
-	public String getLinkLabel() {
-		return node.getName();
-	}
+    public String getLinkLabel() {
+        return node.getName();
+    }
 
-	// === ICoverageTableItem ===
+    // === ICoverageTableItem ===
 
-	public NodeType getNode() {
-		return node;
-	}
+    public NodeType getNode() {
+        return node;
+    }
 
 }

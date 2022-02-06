@@ -19,66 +19,63 @@ package org.jacoco.core.data;
  */
 public class SessionInfo implements Comparable<SessionInfo> {
 
-	private final String id;
+    private final String id;
 
-	private final long start;
+    private final long start;
 
-	private final long dump;
+    private final long dump;
 
-	/**
-	 * Create a immutable session info with the given data.
-	 *
-	 * @param id
-	 *            arbitrary session identifier, must not be <code>null</code>
-	 * @param start
-	 *            the epoc based time stamp when execution data recording has
-	 *            been started
-	 * @param dump
-	 *            the epoc based time stamp when execution data was collected
-	 */
-	public SessionInfo(final String id, final long start, final long dump) {
-		if (id == null) {
-			throw new IllegalArgumentException();
-		}
-		this.id = id;
-		this.start = start;
-		this.dump = dump;
-	}
+    /**
+     * Create a immutable session info with the given data.
+     *
+     * @param id    arbitrary session identifier, must not be <code>null</code>
+     * @param start the epoc based time stamp when execution data recording has
+     *              been started
+     * @param dump  the epoc based time stamp when execution data was collected
+     */
+    public SessionInfo(final String id, final long start, final long dump) {
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
+        this.id = id;
+        this.start = start;
+        this.dump = dump;
+    }
 
-	/**
-	 * @return identifier for this session
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * @return identifier for this session
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @return the epoc based time stamp when execution data recording has been
-	 *         started
-	 */
-	public long getStartTimeStamp() {
-		return start;
-	}
+    /**
+     * @return the epoc based time stamp when execution data recording has been
+     * started
+     */
+    public long getStartTimeStamp() {
+        return start;
+    }
 
-	/**
-	 * @return the epoc based time stamp when execution data was collected
-	 */
-	public long getDumpTimeStamp() {
-		return dump;
-	}
+    /**
+     * @return the epoc based time stamp when execution data was collected
+     */
+    public long getDumpTimeStamp() {
+        return dump;
+    }
 
-	public int compareTo(final SessionInfo other) {
-		if (this.dump < other.dump) {
-			return -1;
-		}
-		if (this.dump > other.dump) {
-			return +1;
-		}
-		return 0;
-	}
+    public int compareTo(final SessionInfo other) {
+        if (this.dump < other.dump) {
+            return -1;
+        }
+        if (this.dump > other.dump) {
+            return +1;
+        }
+        return 0;
+    }
 
-	@Override
-	public String toString() {
-		return "SessionInfo[" + id + "]";
-	}
+    @Override
+    public String toString() {
+        return "SessionInfo[" + id + "]";
+    }
 }

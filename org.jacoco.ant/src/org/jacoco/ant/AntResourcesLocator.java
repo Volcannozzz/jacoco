@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.jacoco.ant;
 
-import java.util.Iterator;
-
 import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.resources.FileResource;
 import org.jacoco.report.DirectorySourceFileLocator;
 import org.jacoco.report.MultiSourceFileLocator;
+
+import java.util.Iterator;
 
 /**
  * Source file locator based on Ant resources. The locator supports files as
@@ -30,49 +30,48 @@ import org.jacoco.report.MultiSourceFileLocator;
  */
 class AntResourcesLocator extends MultiSourceFileLocator {
 
-	private final String encoding;
-	private final AntFilesLocator filesLocator;
+    private final String encoding;
+    private final AntFilesLocator filesLocator;
 
-	private boolean empty;
+    private boolean empty;
 
-	AntResourcesLocator(final String encoding, final int tabWidth) {
-		super(tabWidth);
-		this.encoding = encoding;
-		this.filesLocator = new AntFilesLocator(encoding, tabWidth);
-		this.empty = true;
-		super.add(filesLocator);
-	}
+    AntResourcesLocator(final String encoding, final int tabWidth) {
+        super(tabWidth);
+        this.encoding = encoding;
+        this.filesLocator = new AntFilesLocator(encoding, tabWidth);
+        this.empty = true;
+        super.add(filesLocator);
+    }
 
-	/**
-	 * Adds the given file or directory resource to the locator.
-	 *
-	 * @param resource
-	 *            resource to add
-	 */
-	void add(final Resource resource) {
-		empty = false;
-		if (resource.isDirectory()) {
-			final FileResource dir = (FileResource) resource;
-			super.add(new DirectorySourceFileLocator(dir.getFile(), encoding,
-					getTabWidth()));
-		} else {
-			filesLocator.add(resource);
-		}
-	}
+    /**
+     * Adds the given file or directory resource to the locator.
+     *
+     * @param resource resource to add
+     */
+    void add(final Resource resource) {
+        empty = false;
+        if (resource.isDirectory()) {
+            final FileResource dir = (FileResource) resource;
+            super.add(new DirectorySourceFileLocator(dir.getFile(), encoding,
+                    getTabWidth()));
+        } else {
+            filesLocator.add(resource);
+        }
+    }
 
-	void addAll(final Iterator<?> iterator) {
-		while (iterator.hasNext()) {
-			add((Resource) iterator.next());
-		}
-	}
+    void addAll(final Iterator<?> iterator) {
+        while (iterator.hasNext()) {
+            add((Resource) iterator.next());
+        }
+    }
 
-	/**
-	 * Checks, whether resources have been added.
-	 *
-	 * @return <code>true</code>, if no resources have been added
-	 */
-	boolean isEmpty() {
-		return empty;
-	}
+    /**
+     * Checks, whether resources have been added.
+     *
+     * @return <code>true</code>, if no resources have been added
+     */
+    boolean isEmpty() {
+        return empty;
+    }
 
 }

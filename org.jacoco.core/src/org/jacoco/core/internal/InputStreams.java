@@ -21,30 +21,28 @@ import java.io.InputStream;
  */
 public final class InputStreams {
 
-	private InputStreams() {
-	}
+    private InputStreams() {
+    }
 
-	/**
-	 * Reads all bytes from an input stream into a byte array. The provided
-	 * {@link InputStream} is not closed by this method.
-	 *
-	 * @param is
-	 *            the input stream to read from
-	 * @return a byte array containing all the bytes from the stream
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 */
-	public static byte[] readFully(final InputStream is) throws IOException {
-		final byte[] buf = new byte[1024];
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		while (true) {
-			final int r = is.read(buf);
-			if (r == -1) {
-				break;
-			}
-			out.write(buf, 0, r);
-		}
-		return out.toByteArray();
-	}
+    /**
+     * Reads all bytes from an input stream into a byte array. The provided
+     * {@link InputStream} is not closed by this method.
+     *
+     * @param is the input stream to read from
+     * @return a byte array containing all the bytes from the stream
+     * @throws IOException if an I/O error occurs
+     */
+    public static byte[] readFully(final InputStream is) throws IOException {
+        final byte[] buf = new byte[1024];
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        while (true) {
+            final int r = is.read(buf);
+            if (r == -1) {
+                break;
+            }
+            out.write(buf, 0, r);
+        }
+        return out.toByteArray();
+    }
 
 }

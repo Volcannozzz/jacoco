@@ -12,72 +12,72 @@
  *******************************************************************************/
 package org.jacoco.report.internal.html;
 
-import java.util.Locale;
-
 import org.jacoco.report.ILanguageNames;
 import org.jacoco.report.internal.html.index.IIndexUpdate;
 import org.jacoco.report.internal.html.resources.Resources;
 import org.jacoco.report.internal.html.table.Table;
+
+import java.util.Locale;
 
 /**
  * Context and configuration information during creation of a HTML report.
  */
 public interface IHTMLReportContext {
 
-	/**
-	 * Returns the static resources used in this report.
-	 *
-	 * @return static resources
-	 */
-	Resources getResources();
+    /**
+     * Returns the static resources used in this report.
+     *
+     * @return static resources
+     */
+    Resources getResources();
 
-	/**
-	 * Returns the language names call-back used in this report.
-	 *
-	 * @return language names
-	 */
-	ILanguageNames getLanguageNames();
+    /**
+     * Returns the language names call-back used in this report.
+     *
+     * @return language names
+     */
+    ILanguageNames getLanguageNames();
 
-	/**
-	 * Returns a table for rendering coverage nodes.
-	 *
-	 * @return table for rendering
-	 */
-	Table getTable();
+    /**
+     * Returns a table for rendering coverage nodes.
+     *
+     * @return table for rendering
+     */
+    Table getTable();
 
-	/**
-	 * Returns a string of textual information to include in every page footer.
-	 *
-	 * @return footer text or empty string
-	 */
-	String getFooterText();
+    /**
+     * Returns a string of textual information to include in every page footer.
+     *
+     * @return footer text or empty string
+     */
+    String getFooterText();
 
-	/**
-	 * Returns the link to the sessions page.
-	 *
-	 * @return sessions page link
-	 */
-	ILinkable getSessionsPage();
+    /**
+     * Returns the link to the sessions page.
+     *
+     * @return sessions page link
+     */
+    ILinkable getSessionsPage();
 
-	/**
-	 * Returns the encoding of the generated HTML documents.
-	 *
-	 * @return encoding for generated HTML documents
-	 */
-	String getOutputEncoding();
+    /**
+     * Returns the encoding of the generated HTML documents.
+     *
+     * @return encoding for generated HTML documents
+     */
+    String getOutputEncoding();
 
-	/**
-	 * Returns the service for index updates.
-	 *
-	 * @return sevice for indes updates
-	 */
-	IIndexUpdate getIndexUpdate();
+    /**
+     * Returns the service for index updates.
+     *
+     * @return sevice for indes updates
+     */
+    IIndexUpdate getIndexUpdate();
 
-	/**
-	 * Returns the locale used to format numbers and dates.
-	 *
-	 * @return locale for numbers and dates
-	 */
-	Locale getLocale();
+    /**
+     * Returns the locale used to format numbers and dates.
+     *
+     * @return locale for numbers and dates
+     */
+    Locale getLocale();
 
 }

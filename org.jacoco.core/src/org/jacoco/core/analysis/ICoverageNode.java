@@ -18,136 +18,159 @@ package org.jacoco.core.analysis;
  */
 public interface ICoverageNode {
 
-	/**
-	 * Type of a Java element represented by a {@link ICoverageNode} instance.
-	 */
-	enum ElementType {
+    /**
+     * Returns the type of element represented by this node.
+     *
+     * @return type of this node
+     */
+    ElementType getElementType();
 
-		/** Method */
-		METHOD,
+    /**
+     * Returns the name of this node.
+     *
+     * @return name of this node
+     */
+    String getName();
 
-		/** Class */
-		CLASS,
+    /**
+     * Returns the counter for byte code instructions.
+     *
+     * @return counter for instructions
+     */
+    ICounter getInstructionCounter();
 
-		/** Source File */
-		SOURCEFILE,
+    /**
+     * Returns the counter for branches.
+     *
+     * @return counter for branches
+     */
+    ICounter getBranchCounter();
 
-		/** Java Package */
-		PACKAGE,
+    /**
+     * Returns the counter for lines.
+     *
+     * @return counter for lines
+     */
+    ICounter getLineCounter();
 
-		/** Bundle of Packages */
-		BUNDLE,
+    /**
+     * Returns the counter for cyclomatic complexity.
+     *
+     * @return counter for complexity
+     */
+    ICounter getComplexityCounter();
 
-		/** Logical Group of Bundles */
-		GROUP,
+    /**
+     * Returns the counter for methods.
+     *
+     * @return counter for methods
+     */
+    ICounter getMethodCounter();
 
-	}
+    /**
+     * Returns the counter for classes.
+     *
+     * @return counter for classes
+     */
+    ICounter getClassCounter();
 
-	/**
-	 * Different counter types supported by JaCoCo.
-	 */
-	enum CounterEntity {
+    /**
+     * Generic access to the the counters.
+     *
+     * @param entity entity we're we want to have the counter for
+     * @return counter for the given entity
+     */
+    ICounter getCounter(CounterEntity entity);
 
-		/** Counter for instructions */
-		INSTRUCTION,
+    /**
+     * Checks whether this node contains code relevant for code coverage.
+     *
+     * @return <code>true</code> if this node contains code relevant for code
+     * coverage
+     */
+    boolean containsCode();
 
-		/** Counter for branches */
-		BRANCH,
+    /**
+     * Creates a plain copy of this node. While {@link ICoverageNode}
+     * implementations may contain heavy data structures, the copy returned by
+     * this method is reduced to the counters only. This helps to save memory
+     * while processing huge structures.
+     *
+     * @return copy with counters only
+     */
+    ICoverageNode getPlainCopy();
 
-		/** Counter for source lines */
-		LINE,
+    /**
+     * Type of a Java element represented by a {@link ICoverageNode} instance.
+     */
+    enum ElementType {
 
-		/** Counter for cyclomatic complexity */
-		COMPLEXITY,
+        /**
+         * Method
+         */
+        METHOD,
 
-		/** Counter for methods */
-		METHOD,
+        /**
+         * Class
+         */
+        CLASS,
 
-		/** Counter for classes */
-		CLASS
-	}
+        /**
+         * Source File
+         */
+        SOURCEFILE,
 
-	/**
-	 * Returns the type of element represented by this node.
-	 *
-	 * @return type of this node
-	 */
-	ElementType getElementType();
+        /**
+         * Java Package
+         */
+        PACKAGE,
 
-	/**
-	 * Returns the name of this node.
-	 *
-	 * @return name of this node
-	 */
-	String getName();
+        /**
+         * Bundle of Packages
+         */
+        BUNDLE,
 
-	/**
-	 * Returns the counter for byte code instructions.
-	 *
-	 * @return counter for instructions
-	 */
-	ICounter getInstructionCounter();
+        /**
+         * Logical Group of Bundles
+         */
+        GROUP,
 
-	/**
-	 * Returns the counter for branches.
-	 *
-	 * @return counter for branches
-	 */
-	ICounter getBranchCounter();
+    }
 
-	/**
-	 * Returns the counter for lines.
-	 *
-	 * @return counter for lines
-	 */
-	ICounter getLineCounter();
+    /**
+     * Different counter types supported by JaCoCo.
+     */
+    enum CounterEntity {
 
-	/**
-	 * Returns the counter for cyclomatic complexity.
-	 *
-	 * @return counter for complexity
-	 */
-	ICounter getComplexityCounter();
+        /**
+         * Counter for instructions
+         */
+        INSTRUCTION,
 
-	/**
-	 * Returns the counter for methods.
-	 *
-	 * @return counter for methods
-	 */
-	ICounter getMethodCounter();
+        /**
+         * Counter for branches
+         */
+        BRANCH,
 
-	/**
-	 * Returns the counter for classes.
-	 *
-	 * @return counter for classes
-	 */
-	ICounter getClassCounter();
+        /**
+         * Counter for source lines
+         */
+        LINE,
 
-	/**
-	 * Generic access to the the counters.
-	 *
-	 * @param entity
-	 *            entity we're we want to have the counter for
-	 * @return counter for the given entity
-	 */
-	ICounter getCounter(CounterEntity entity);
+        /**
+         * Counter for cyclomatic complexity
+         */
+        COMPLEXITY,
 
-	/**
-	 * Checks whether this node contains code relevant for code coverage.
-	 *
-	 * @return <code>true</code> if this node contains code relevant for code
-	 *         coverage
-	 */
-	boolean containsCode();
+        /**
+         * Counter for methods
+         */
+        METHOD,
 
-	/**
-	 * Creates a plain copy of this node. While {@link ICoverageNode}
-	 * implementations may contain heavy data structures, the copy returned by
-	 * this method is reduced to the counters only. This helps to save memory
-	 * while processing huge structures.
-	 *
-	 * @return copy with counters only
-	 */
-	ICoverageNode getPlainCopy();
+        /**
+         * Counter for classes
+         */
+        CLASS
+    }
 
 }

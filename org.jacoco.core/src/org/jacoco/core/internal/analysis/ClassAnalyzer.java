@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.jacoco.core.internal.analysis;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.jacoco.core.internal.analysis.filter.Filters;
 import org.jacoco.core.internal.analysis.filter.IFilter;
 import org.jacoco.core.internal.analysis.filter.IFilterContext;
@@ -27,144 +24,142 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Analyzes the structure of a class.
  */
 public class ClassAnalyzer extends ClassProbesVisitor
-		implements IFilterContext {
+        implements IFilterContext {
 
-	private final ClassCoverageImpl coverage;
-	private final boolean[] probes;
-	private final StringPool stringPool;
+    private final ClassCoverageImpl coverage;
+    private final boolean[] probes;
+    private final StringPool stringPool;
 
-	private final Set<String> classAnnotations = new HashSet<String>();
+    private final Set<String> classAnnotations = new HashSet<String>();
 
-	private final Set<String> classAttributes = new HashSet<String>();
+    private final Set<String> classAttributes = new HashSet<String>();
+    private final IFilter filter;
+    private String sourceDebugExtension;
 
-	private String sourceDebugExtension;
+    /**
+     * Creates a new analyzer that builds coverage data for a class.
+     *
+     * @param coverage   coverage node for the analyzed class data
+     * @param probes     execution data for this class or <code>null</code>
+     * @param stringPool shared pool to minimize the number of {@link String} instances
+     */
+    public ClassAnalyzer(final ClassCoverageImpl coverage,
+                         final boolean[] probes, final StringPool stringPool) {
+        this.coverage = coverage;
+        this.probes = probes;
+        this.stringPool = stringPool;
+        this.filter = Filters.all();
+    }
 
-	private final IFilter filter;
+    @Override
+    public void visit(final int version, final int access, final String name,
+                      final String signature, final String superName,
+                      final String[] interfaces) {
+        coverage.setSignature(stringPool.get(signature));
+        coverage.setSuperName(stringPool.get(superName));
+        coverage.setInterfaces(stringPool.get(interfaces));
+    }
 
-	/**
-	 * Creates a new analyzer that builds coverage data for a class.
-	 *
-	 * @param coverage
-	 *            coverage node for the analyzed class data
-	 * @param probes
-	 *            execution data for this class or <code>null</code>
-	 * @param stringPool
-	 *            shared pool to minimize the number of {@link String} instances
-	 */
-	public ClassAnalyzer(final ClassCoverageImpl coverage,
-			final boolean[] probes, final StringPool stringPool) {
-		this.coverage = coverage;
-		this.probes = probes;
-		this.stringPool = stringPool;
-		this.filter = Filters.all();
-	}
+    @Override
+    public AnnotationVisitor visitAnnotation(final String desc,
+                                             final boolean visible) {
+        classAnnotations.add(desc);
+        return super.visitAnnotation(desc, visible);
+    }
 
-	@Override
-	public void visit(final int version, final int access, final String name,
-			final String signature, final String superName,
-			final String[] interfaces) {
-		coverage.setSignature(stringPool.get(signature));
-		coverage.setSuperName(stringPool.get(superName));
-		coverage.setInterfaces(stringPool.get(interfaces));
-	}
+    @Override
+    public void visitAttribute(final Attribute attribute) {
+        classAttributes.add(attribute.type);
+    }
 
-	@Override
-	public AnnotationVisitor visitAnnotation(final String desc,
-			final boolean visible) {
-		classAnnotations.add(desc);
-		return super.visitAnnotation(desc, visible);
-	}
+    @Override
+    public void visitSource(final String source, final String debug) {
+        coverage.setSourceFileName(stringPool.get(source));
+        sourceDebugExtension = debug;
+    }
 
-	@Override
-	public void visitAttribute(final Attribute attribute) {
-		classAttributes.add(attribute.type);
-	}
+    @Override
+    public MethodProbesVisitor visitMethod(final int access, final String name,
+                                           final String desc, final String signature,
+                                           final String[] exceptions) {
 
-	@Override
-	public void visitSource(final String source, final String debug) {
-		coverage.setSourceFileName(stringPool.get(source));
-		sourceDebugExtension = debug;
-	}
+        InstrSupport.assertNotInstrumented(name, coverage.getName());
 
-	@Override
-	public MethodProbesVisitor visitMethod(final int access, final String name,
-			final String desc, final String signature,
-			final String[] exceptions) {
+        final InstructionsBuilder builder = new InstructionsBuilder(probes);
 
-		InstrSupport.assertNotInstrumented(name, coverage.getName());
+        return new MethodAnalyzer(builder) {
 
-		final InstructionsBuilder builder = new InstructionsBuilder(probes);
+            @Override
+            public void accept(final MethodNode methodNode,
+                               final MethodVisitor methodVisitor) {
+                super.accept(methodNode, methodVisitor);
+                addMethodCoverage(stringPool.get(name), stringPool.get(desc),
+                        stringPool.get(signature), builder, methodNode);
+            }
+        };
+    }
 
-		return new MethodAnalyzer(builder) {
+    private void addMethodCoverage(final String name, final String desc,
+                                   final String signature, final InstructionsBuilder icc,
+                                   final MethodNode methodNode) {
+        final MethodCoverageCalculator mcc = new MethodCoverageCalculator(
+                icc.getInstructions());
+        filter.filter(methodNode, this, mcc);
 
-			@Override
-			public void accept(final MethodNode methodNode,
-					final MethodVisitor methodVisitor) {
-				super.accept(methodNode, methodVisitor);
-				addMethodCoverage(stringPool.get(name), stringPool.get(desc),
-						stringPool.get(signature), builder, methodNode);
-			}
-		};
-	}
+        final MethodCoverageImpl mc = new MethodCoverageImpl(name, desc,
+                signature);
+        mcc.calculate(mc);
 
-	private void addMethodCoverage(final String name, final String desc,
-			final String signature, final InstructionsBuilder icc,
-			final MethodNode methodNode) {
-		final MethodCoverageCalculator mcc = new MethodCoverageCalculator(
-				icc.getInstructions());
-		filter.filter(methodNode, this, mcc);
+        if (mc.containsCode()) {
+            // Only consider methods that actually contain code
+            coverage.addMethod(mc);
+        }
 
-		final MethodCoverageImpl mc = new MethodCoverageImpl(name, desc,
-				signature);
-		mcc.calculate(mc);
+    }
 
-		if (mc.containsCode()) {
-			// Only consider methods that actually contain code
-			coverage.addMethod(mc);
-		}
+    @Override
+    public FieldVisitor visitField(final int access, final String name,
+                                   final String desc, final String signature, final Object value) {
+        InstrSupport.assertNotInstrumented(name, coverage.getName());
+        return super.visitField(access, name, desc, signature, value);
+    }
 
-	}
+    @Override
+    public void visitTotalProbeCount(final int count) {
+        // nothing to do
+    }
 
-	@Override
-	public FieldVisitor visitField(final int access, final String name,
-			final String desc, final String signature, final Object value) {
-		InstrSupport.assertNotInstrumented(name, coverage.getName());
-		return super.visitField(access, name, desc, signature, value);
-	}
+    // IFilterContext implementation
 
-	@Override
-	public void visitTotalProbeCount(final int count) {
-		// nothing to do
-	}
+    public String getClassName() {
+        return coverage.getName();
+    }
 
-	// IFilterContext implementation
+    public String getSuperClassName() {
+        return coverage.getSuperName();
+    }
 
-	public String getClassName() {
-		return coverage.getName();
-	}
+    public Set<String> getClassAnnotations() {
+        return classAnnotations;
+    }
 
-	public String getSuperClassName() {
-		return coverage.getSuperName();
-	}
+    public Set<String> getClassAttributes() {
+        return classAttributes;
+    }
 
-	public Set<String> getClassAnnotations() {
-		return classAnnotations;
-	}
+    public String getSourceFileName() {
+        return coverage.getSourceFileName();
+    }
 
-	public Set<String> getClassAttributes() {
-		return classAttributes;
-	}
-
-	public String getSourceFileName() {
-		return coverage.getSourceFileName();
-	}
-
-	public String getSourceDebugExtension() {
-		return sourceDebugExtension;
-	}
+    public String getSourceDebugExtension() {
+        return sourceDebugExtension;
+    }
 
 }

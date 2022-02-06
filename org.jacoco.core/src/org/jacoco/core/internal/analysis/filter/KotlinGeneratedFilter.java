@@ -22,40 +22,40 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class KotlinGeneratedFilter implements IFilter {
 
-	static final String KOTLIN_METADATA_DESC = "Lkotlin/Metadata;";
+    static final String KOTLIN_METADATA_DESC = "Lkotlin/Metadata;";
 
-	static boolean isKotlinClass(final IFilterContext context) {
-		return context.getClassAnnotations().contains(KOTLIN_METADATA_DESC);
-	}
+    static boolean isKotlinClass(final IFilterContext context) {
+        return context.getClassAnnotations().contains(KOTLIN_METADATA_DESC);
+    }
 
-	public void filter(final MethodNode methodNode,
-			final IFilterContext context, final IFilterOutput output) {
+    public void filter(final MethodNode methodNode,
+                       final IFilterContext context, final IFilterOutput output) {
 
-		if (context.getSourceFileName() == null) {
-			// probably full debug information is missing
-			// disabled filtering as all methods might be erroneously skipped
-			return;
-		}
+        if (context.getSourceFileName() == null) {
+            // probably full debug information is missing
+            // disabled filtering as all methods might be erroneously skipped
+            return;
+        }
 
-		if (!isKotlinClass(context)) {
-			return;
-		}
+        if (!isKotlinClass(context)) {
+            return;
+        }
 
-		if (hasLineNumber(methodNode)) {
-			return;
-		}
+        if (hasLineNumber(methodNode)) {
+            return;
+        }
 
-		output.ignore(methodNode.instructions.getFirst(),
-				methodNode.instructions.getLast());
-	}
+        output.ignore(methodNode.instructions.getFirst(),
+                methodNode.instructions.getLast());
+    }
 
-	private boolean hasLineNumber(final MethodNode methodNode) {
-		for (final AbstractInsnNode i : methodNode.instructions) {
-			if (AbstractInsnNode.LINE == i.getType()) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean hasLineNumber(final MethodNode methodNode) {
+        for (final AbstractInsnNode i : methodNode.instructions) {
+            if (AbstractInsnNode.LINE == i.getType()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
