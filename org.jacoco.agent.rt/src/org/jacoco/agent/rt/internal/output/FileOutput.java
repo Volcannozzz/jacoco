@@ -12,14 +12,14 @@
  *******************************************************************************/
 package org.jacoco.agent.rt.internal.output;
 
+import org.jacoco.core.data.ExecutionDataWriter;
+import org.jacoco.core.runtime.AgentOptions;
+import org.jacoco.core.runtime.RuntimeData;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.jacoco.core.data.ExecutionDataWriter;
-import org.jacoco.core.runtime.AgentOptions;
-import org.jacoco.core.runtime.RuntimeData;
 
 /**
  * Local only agent output that will write coverage data to the filesystem. This
@@ -31,44 +31,44 @@ import org.jacoco.core.runtime.RuntimeData;
  */
 public class FileOutput implements IAgentOutput {
 
-	private RuntimeData data;
+    private RuntimeData data;
 
-	private File destFile;
+    private File destFile;
 
-	private boolean append;
+    private boolean append;
 
-	public final void startup(final AgentOptions options,
-			final RuntimeData data) throws IOException {
-		this.data = data;
-		this.destFile = new File(options.getDestfile()).getAbsoluteFile();
-		this.append = options.getAppend();
-		final File folder = destFile.getParentFile();
-		if (folder != null) {
-			folder.mkdirs();
-		}
-		// Make sure we can write to the file:
-		openFile().close();
-	}
+    public final void startup(final AgentOptions options,
+                              final RuntimeData data) throws IOException {
+        this.data = data;
+        this.destFile = new File(options.getDestfile()).getAbsoluteFile();
+        this.append = options.getAppend();
+        final File folder = destFile.getParentFile();
+        if (folder != null) {
+            folder.mkdirs();
+        }
+        // Make sure we can write to the file:
+        openFile().close();
+    }
 
-	public void writeExecutionData(final boolean reset) throws IOException {
-		final OutputStream output = openFile();
-		try {
-			final ExecutionDataWriter writer = new ExecutionDataWriter(output);
-			data.collect(writer, writer, reset);
-		} finally {
-			output.close();
-		}
-	}
+    public void writeExecutionData(final boolean reset) throws IOException {
+        final OutputStream output = openFile();
+        try {
+            final ExecutionDataWriter writer = new ExecutionDataWriter(output);
+            data.collect(writer, writer, reset);
+        } finally {
+            output.close();
+        }
+    }
 
-	public void shutdown() throws IOException {
-		// Nothing to do
-	}
+    public void shutdown() throws IOException {
+        // Nothing to do
+    }
 
-	private OutputStream openFile() throws IOException {
-		final FileOutputStream file = new FileOutputStream(destFile, append);
-		// Avoid concurrent writes from different agents running in parallel:
-		file.getChannel().lock();
-		return file;
-	}
+    private OutputStream openFile() throws IOException {
+        final FileOutputStream file = new FileOutputStream(destFile, append);
+        // Avoid concurrent writes from different agents running in parallel:
+        file.getChannel().lock();
+        return file;
+    }
 
 }

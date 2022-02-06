@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.jacoco.examples;
 
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -28,6 +23,11 @@ import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Example usage of the JaCoCo core API. In this tutorial a single target class
  * will be instrumented and executed. Finally the coverage information will be
@@ -35,169 +35,163 @@ import org.jacoco.core.runtime.RuntimeData;
  */
 public final class CoreTutorial {
 
-	/**
-	 * The test target we want to see code coverage for.
-	 */
-	public static class TestTarget implements Runnable {
+    private final PrintStream out;
 
-		public void run() {
-			isPrime(7);
-		}
+    /**
+     * Creates a new example instance printing to the given stream.
+     *
+     * @param out stream for outputs
+     */
+    public CoreTutorial(final PrintStream out) {
+        this.out = out;
+    }
 
-		private boolean isPrime(final int n) {
-			for (int i = 2; i * i <= n; i++) {
-				if ((n ^ i) == 0) {
-					return false;
-				}
-			}
-			return true;
-		}
+    /**
+     * Entry point to run this examples as a Java application.
+     *
+     * @param args list of program arguments
+     * @throws Exception in case of errors
+     */
+    public static void main(final String[] args) throws Exception {
+        new CoreTutorial(System.out).execute();
+    }
 
-	}
+    /**
+     * Run this example.
+     *
+     * @throws Exception in case of errors
+     */
+    public void execute() throws Exception {
+        final String targetName = TestTarget.class.getName();
 
-	/**
-	 * A class loader that loads classes from in-memory data.
-	 */
-	public static class MemoryClassLoader extends ClassLoader {
+        // For instrumentation and runtime we need a IRuntime instance
+        // to collect execution data:
+        final IRuntime runtime = new LoggerRuntime();
 
-		private final Map<String, byte[]> definitions = new HashMap<String, byte[]>();
+        // The Instrumenter creates a modified version of our test target class
+        // that contains additional probes for execution data recording:
+        final Instrumenter instr = new Instrumenter(runtime);
+        InputStream original = getTargetClass(targetName);
+        final byte[] instrumented = instr.instrument(original, targetName);
+        original.close();
 
-		/**
-		 * Add a in-memory representation of a class.
-		 *
-		 * @param name
-		 *            name of the class
-		 * @param bytes
-		 *            class definition
-		 */
-		public void addDefinition(final String name, final byte[] bytes) {
-			definitions.put(name, bytes);
-		}
+        // Now we're ready to run our instrumented class and need to startup the
+        // runtime first:
+        final RuntimeData data = new RuntimeData();
+        runtime.startup(data);
 
-		@Override
-		protected Class<?> loadClass(final String name, final boolean resolve)
-				throws ClassNotFoundException {
-			final byte[] bytes = definitions.get(name);
-			if (bytes != null) {
-				return defineClass(name, bytes, 0, bytes.length);
-			}
-			return super.loadClass(name, resolve);
-		}
+        // In this tutorial we use a special class loader to directly load the
+        // instrumented class definition from a byte[] instances.
+        final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
+        memoryClassLoader.addDefinition(targetName, instrumented);
+        final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
 
-	}
+        // Here we execute our test target class through its Runnable interface:
+        final Runnable targetInstance = (Runnable) targetClass.newInstance();
+        targetInstance.run();
 
-	private final PrintStream out;
+        // At the end of test execution we collect execution data and shutdown
+        // the runtime:
+        final ExecutionDataStore executionData = new ExecutionDataStore();
+        final SessionInfoStore sessionInfos = new SessionInfoStore();
+        data.collect(executionData, sessionInfos, false);
+        runtime.shutdown();
 
-	/**
-	 * Creates a new example instance printing to the given stream.
-	 *
-	 * @param out
-	 *            stream for outputs
-	 */
-	public CoreTutorial(final PrintStream out) {
-		this.out = out;
-	}
+        // Together with the original class definition we can calculate coverage
+        // information:
+        final CoverageBuilder coverageBuilder = new CoverageBuilder();
+        final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
+        original = getTargetClass(targetName);
+        analyzer.analyzeClass(original, targetName);
+        original.close();
 
-	/**
-	 * Run this example.
-	 *
-	 * @throws Exception
-	 *             in case of errors
-	 */
-	public void execute() throws Exception {
-		final String targetName = TestTarget.class.getName();
+        // Let's dump some metrics and line coverage information:
+        for (final IClassCoverage cc : coverageBuilder.getClasses()) {
+            out.printf("Coverage of class %s%n", cc.getName());
 
-		// For instrumentation and runtime we need a IRuntime instance
-		// to collect execution data:
-		final IRuntime runtime = new LoggerRuntime();
+            printCounter("instructions", cc.getInstructionCounter());
+            printCounter("branches", cc.getBranchCounter());
+            printCounter("lines", cc.getLineCounter());
+            printCounter("methods", cc.getMethodCounter());
+            printCounter("complexity", cc.getComplexityCounter());
 
-		// The Instrumenter creates a modified version of our test target class
-		// that contains additional probes for execution data recording:
-		final Instrumenter instr = new Instrumenter(runtime);
-		InputStream original = getTargetClass(targetName);
-		final byte[] instrumented = instr.instrument(original, targetName);
-		original.close();
+            for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
+                out.printf("Line %s: %s%n", Integer.valueOf(i),
+                        getColor(cc.getLine(i).getStatus()));
+            }
+        }
+    }
 
-		// Now we're ready to run our instrumented class and need to startup the
-		// runtime first:
-		final RuntimeData data = new RuntimeData();
-		runtime.startup(data);
+    private InputStream getTargetClass(final String name) {
+        final String resource = '/' + name.replace('.', '/') + ".class";
+        return getClass().getResourceAsStream(resource);
+    }
 
-		// In this tutorial we use a special class loader to directly load the
-		// instrumented class definition from a byte[] instances.
-		final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
-		memoryClassLoader.addDefinition(targetName, instrumented);
-		final Class<?> targetClass = memoryClassLoader.loadClass(targetName);
+    private void printCounter(final String unit, final ICounter counter) {
+        final Integer missed = Integer.valueOf(counter.getMissedCount());
+        final Integer total = Integer.valueOf(counter.getTotalCount());
+        out.printf("%s of %s %s missed%n", missed, total, unit);
+    }
 
-		// Here we execute our test target class through its Runnable interface:
-		final Runnable targetInstance = (Runnable) targetClass.newInstance();
-		targetInstance.run();
+    private String getColor(final int status) {
+        switch (status) {
+            case ICounter.NOT_COVERED:
+                return "red";
+            case ICounter.PARTLY_COVERED:
+                return "yellow";
+            case ICounter.FULLY_COVERED:
+                return "green";
+        }
+        return "";
+    }
 
-		// At the end of test execution we collect execution data and shutdown
-		// the runtime:
-		final ExecutionDataStore executionData = new ExecutionDataStore();
-		final SessionInfoStore sessionInfos = new SessionInfoStore();
-		data.collect(executionData, sessionInfos, false);
-		runtime.shutdown();
+    /**
+     * The test target we want to see code coverage for.
+     */
+    public static class TestTarget implements Runnable {
 
-		// Together with the original class definition we can calculate coverage
-		// information:
-		final CoverageBuilder coverageBuilder = new CoverageBuilder();
-		final Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
-		original = getTargetClass(targetName);
-		analyzer.analyzeClass(original, targetName);
-		original.close();
+        public void run() {
+            isPrime(7);
+        }
 
-		// Let's dump some metrics and line coverage information:
-		for (final IClassCoverage cc : coverageBuilder.getClasses()) {
-			out.printf("Coverage of class %s%n", cc.getName());
+        private boolean isPrime(final int n) {
+            for (int i = 2; i * i <= n; i++) {
+                if ((n ^ i) == 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-			printCounter("instructions", cc.getInstructionCounter());
-			printCounter("branches", cc.getBranchCounter());
-			printCounter("lines", cc.getLineCounter());
-			printCounter("methods", cc.getMethodCounter());
-			printCounter("complexity", cc.getComplexityCounter());
+    }
 
-			for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
-				out.printf("Line %s: %s%n", Integer.valueOf(i),
-						getColor(cc.getLine(i).getStatus()));
-			}
-		}
-	}
+    /**
+     * A class loader that loads classes from in-memory data.
+     */
+    public static class MemoryClassLoader extends ClassLoader {
 
-	private InputStream getTargetClass(final String name) {
-		final String resource = '/' + name.replace('.', '/') + ".class";
-		return getClass().getResourceAsStream(resource);
-	}
+        private final Map<String, byte[]> definitions = new HashMap<String, byte[]>();
 
-	private void printCounter(final String unit, final ICounter counter) {
-		final Integer missed = Integer.valueOf(counter.getMissedCount());
-		final Integer total = Integer.valueOf(counter.getTotalCount());
-		out.printf("%s of %s %s missed%n", missed, total, unit);
-	}
+        /**
+         * Add a in-memory representation of a class.
+         *
+         * @param name  name of the class
+         * @param bytes class definition
+         */
+        public void addDefinition(final String name, final byte[] bytes) {
+            definitions.put(name, bytes);
+        }
 
-	private String getColor(final int status) {
-		switch (status) {
-		case ICounter.NOT_COVERED:
-			return "red";
-		case ICounter.PARTLY_COVERED:
-			return "yellow";
-		case ICounter.FULLY_COVERED:
-			return "green";
-		}
-		return "";
-	}
+        @Override
+        protected Class<?> loadClass(final String name, final boolean resolve)
+                throws ClassNotFoundException {
+            final byte[] bytes = definitions.get(name);
+            if (bytes != null) {
+                return defineClass(name, bytes, 0, bytes.length);
+            }
+            return super.loadClass(name, resolve);
+        }
 
-	/**
-	 * Entry point to run this examples as a Java application.
-	 *
-	 * @param args
-	 *            list of program arguments
-	 * @throws Exception
-	 *             in case of errors
-	 */
-	public static void main(final String[] args) throws Exception {
-		new CoreTutorial(System.out).execute();
-	}
+    }
 
 }

@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.jacoco.maven;
 
-import java.io.File;
-
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+
+import java.io.File;
 
 /**
  * Same as <code>prepare-agent</code>, but provides default values suitable for
@@ -33,18 +33,18 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "prepare-agent-integration", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true)
 public class AgentITMojo extends AbstractAgentMojo {
 
-	/**
-	 * Path to the output file for execution data.
-	 */
-	@Parameter(property = "jacoco.destFile", defaultValue = "${project.build.directory}/jacoco-it.exec")
-	private File destFile;
+    /**
+     * Path to the output file for execution data.
+     */
+    @Parameter(property = "jacoco.destFile", defaultValue = "${project.build.directory}/jacoco-it.exec")
+    private File destFile;
 
-	/**
-	 * @return the destFile
-	 */
-	@Override
-	File getDestFile() {
-		return destFile;
-	}
+    /**
+     * @return the destFile
+     */
+    @Override
+    File getDestFile() {
+        return destFile;
+    }
 
 }

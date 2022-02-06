@@ -24,46 +24,44 @@ import java.util.List;
  */
 public class MultiSourceFileLocator implements ISourceFileLocator {
 
-	private final int tabWidth;
+    private final int tabWidth;
 
-	private final List<ISourceFileLocator> delegates;
+    private final List<ISourceFileLocator> delegates;
 
-	/**
-	 * Creates a new empty locator.
-	 *
-	 * @param tabWidth
-	 *            tab width in source files as number of blanks used for all
-	 *            source files
-	 */
-	public MultiSourceFileLocator(final int tabWidth) {
-		this.tabWidth = tabWidth;
-		this.delegates = new ArrayList<ISourceFileLocator>();
-	}
+    /**
+     * Creates a new empty locator.
+     *
+     * @param tabWidth tab width in source files as number of blanks used for all
+     *                 source files
+     */
+    public MultiSourceFileLocator(final int tabWidth) {
+        this.tabWidth = tabWidth;
+        this.delegates = new ArrayList<ISourceFileLocator>();
+    }
 
-	/**
-	 * Adds the given locator. Locators are queried in the sequence they have
-	 * been added.
-	 *
-	 * @param locator
-	 *            Additional locator to query
-	 */
-	public void add(final ISourceFileLocator locator) {
-		delegates.add(locator);
-	}
+    /**
+     * Adds the given locator. Locators are queried in the sequence they have
+     * been added.
+     *
+     * @param locator Additional locator to query
+     */
+    public void add(final ISourceFileLocator locator) {
+        delegates.add(locator);
+    }
 
-	public Reader getSourceFile(final String packageName, final String fileName)
-			throws IOException {
-		for (final ISourceFileLocator d : delegates) {
-			final Reader reader = d.getSourceFile(packageName, fileName);
-			if (reader != null) {
-				return reader;
-			}
-		}
-		return null;
-	}
+    public Reader getSourceFile(final String packageName, final String fileName)
+            throws IOException {
+        for (final ISourceFileLocator d : delegates) {
+            final Reader reader = d.getSourceFile(packageName, fileName);
+            if (reader != null) {
+                return reader;
+            }
+        }
+        return null;
+    }
 
-	public int getTabWidth() {
-		return tabWidth;
-	}
+    public int getTabWidth() {
+        return tabWidth;
+    }
 
 }

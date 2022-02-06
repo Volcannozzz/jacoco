@@ -17,71 +17,57 @@ package org.jacoco.report;
  */
 public interface ILanguageNames {
 
-	/**
-	 * Calculates the language specific name of a package.
-	 *
-	 * @param vmname
-	 *            vm name of a package
-	 * @return language specific notation for the package
-	 */
-	String getPackageName(String vmname);
+    /**
+     * Calculates the language specific name of a package.
+     *
+     * @param vmname vm name of a package
+     * @return language specific notation for the package
+     */
+    String getPackageName(String vmname);
 
-	/**
-	 * Calculates the language specific name of a class.
-	 *
-	 * @param vmname
-	 *            vm name of a class
-	 * @param vmsignature
-	 *            vm signature of the class (may be <code>null</code>)
-	 * @param vmsuperclass
-	 *            vm name of the superclass of the class (may be
-	 *            <code>null</code>)
-	 * @param vminterfaces
-	 *            vm names of interfaces of the class (may be <code>null</code>)
-	 * @return language specific notation of the class
-	 */
-	String getClassName(String vmname, String vmsignature, String vmsuperclass,
-			String[] vminterfaces);
+    /**
+     * Calculates the language specific name of a class.
+     *
+     * @param vmname       vm name of a class
+     * @param vmsignature  vm signature of the class (may be <code>null</code>)
+     * @param vmsuperclass vm name of the superclass of the class (may be
+     *                     <code>null</code>)
+     * @param vminterfaces vm names of interfaces of the class (may be <code>null</code>)
+     * @return language specific notation of the class
+     */
+    String getClassName(String vmname, String vmsignature, String vmsuperclass,
+                        String[] vminterfaces);
 
-	/**
-	 * Calculates the language specific qualified name of a class.
-	 *
-	 * @param vmname
-	 *            vm name of a class
-	 * @return language specific qualified notation of the class
-	 */
-	String getQualifiedClassName(String vmname);
+    /**
+     * Calculates the language specific qualified name of a class.
+     *
+     * @param vmname vm name of a class
+     * @return language specific qualified notation of the class
+     */
+    String getQualifiedClassName(String vmname);
 
-	/**
-	 * Calculates the language specific name of a method.
-	 *
-	 * @param vmclassname
-	 *            vm name of a containing class
-	 * @param vmmethodname
-	 *            vm name of the method
-	 * @param vmdesc
-	 *            vm method descriptor
-	 * @param vmsignature
-	 *            vm signature of the method (may be <code>null</code>)
-	 * @return language specific notation for the method
-	 */
-	String getMethodName(String vmclassname, String vmmethodname, String vmdesc,
-			String vmsignature);
+    /**
+     * Calculates the language specific name of a method.
+     *
+     * @param vmclassname  vm name of a containing class
+     * @param vmmethodname vm name of the method
+     * @param vmdesc       vm method descriptor
+     * @param vmsignature  vm signature of the method (may be <code>null</code>)
+     * @return language specific notation for the method
+     */
+    String getMethodName(String vmclassname, String vmmethodname, String vmdesc,
+                         String vmsignature);
 
-	/**
-	 * Calculates the language specific fully qualified name of a method.
-	 *
-	 * @param vmclassname
-	 *            vm name of a containing class
-	 * @param vmmethodname
-	 *            vm name of the method
-	 * @param vmdesc
-	 *            vm method descriptor
-	 * @param vmsignature
-	 *            vm signature of the method (may be <code>null</code>)
-	 * @return language specific notation for the method
-	 */
-	String getQualifiedMethodName(String vmclassname, String vmmethodname,
-			String vmdesc, String vmsignature);
+    /**
+     * Calculates the language specific fully qualified name of a method.
+     *
+     * @param vmclassname  vm name of a containing class
+     * @param vmmethodname vm name of the method
+     * @param vmdesc       vm method descriptor
+     * @param vmsignature  vm signature of the method (may be <code>null</code>)
+     * @return language specific notation for the method
+     */
+    String getQualifiedMethodName(String vmclassname, String vmmethodname,
+                                  String vmdesc, String vmsignature);
 
 }

@@ -8,7 +8,7 @@
  *
  * Contributors:
  *    Mirko Friedenhagen - initial
- *    
+ *
  *******************************************************************************/
 package org.jacoco.examples.parser;
 

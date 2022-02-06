@@ -12,14 +12,13 @@
  *******************************************************************************/
 package org.jacoco.examples;
 
-import java.io.FileOutputStream;
-
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import java.io.FileOutputStream;
 
 /**
  * This example connects to a JaCoCo agent that runs with the option
@@ -28,56 +27,56 @@ import javax.management.remote.JMXServiceURL;
  */
 public final class MBeanClient {
 
-	private static final String DESTFILE = "jacoco-client.exec";
+    private static final String DESTFILE = "jacoco-client.exec";
 
-	private static final String SERVICE_URL = "service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi";
+    private static final String SERVICE_URL = "service:jmx:rmi:///jndi/rmi://localhost:9999/jmxrmi";
 
-	/**
-	 * Execute the example.
-	 *
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(final String[] args) throws Exception {
-		// Open connection to the coverage agent:
-		final JMXServiceURL url = new JMXServiceURL(SERVICE_URL);
-		final JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-		final MBeanServerConnection connection = jmxc
-				.getMBeanServerConnection();
+    private MBeanClient() {
+    }
 
-		final IProxy proxy = (IProxy) MBeanServerInvocationHandler
-				.newProxyInstance(connection,
-						new ObjectName("org.jacoco:type=Runtime"), IProxy.class,
-						false);
+    /**
+     * Execute the example.
+     *
+     * @param args
+     * @throws Exception
+     */
+    public static void main(final String[] args) throws Exception {
+        // Open connection to the coverage agent:
+        final JMXServiceURL url = new JMXServiceURL(SERVICE_URL);
+        final JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
+        final MBeanServerConnection connection = jmxc
+                .getMBeanServerConnection();
 
-		// Retrieve JaCoCo version and session id:
-		System.out.println("Version: " + proxy.getVersion());
-		System.out.println("Session: " + proxy.getSessionId());
+        final IProxy proxy = (IProxy) MBeanServerInvocationHandler
+                .newProxyInstance(connection,
+                        new ObjectName("org.jacoco:type=Runtime"), IProxy.class,
+                        false);
 
-		// Retrieve dump and write to file:
-		final byte[] data = proxy.getExecutionData(false);
-		final FileOutputStream localFile = new FileOutputStream(DESTFILE);
-		localFile.write(data);
-		localFile.close();
+        // Retrieve JaCoCo version and session id:
+        System.out.println("Version: " + proxy.getVersion());
+        System.out.println("Session: " + proxy.getSessionId());
 
-		// Close connection:
-		jmxc.close();
-	}
+        // Retrieve dump and write to file:
+        final byte[] data = proxy.getExecutionData(false);
+        final FileOutputStream localFile = new FileOutputStream(DESTFILE);
+        localFile.write(data);
+        localFile.close();
 
-	interface IProxy {
-		String getVersion();
+        // Close connection:
+        jmxc.close();
+    }
 
-		String getSessionId();
+    interface IProxy {
+        String getVersion();
 
-		void setSessionId(String id);
+        String getSessionId();
 
-		byte[] getExecutionData(boolean reset);
+        void setSessionId(String id);
 
-		void dump(boolean reset);
+        byte[] getExecutionData(boolean reset);
 
-		void reset();
-	}
+        void dump(boolean reset);
 
-	private MBeanClient() {
-	}
+        void reset();
+    }
 }

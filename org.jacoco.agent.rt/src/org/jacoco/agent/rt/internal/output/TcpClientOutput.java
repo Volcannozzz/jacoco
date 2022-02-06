@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.jacoco.agent.rt.internal.output;
 
-import java.io.IOException;
-import java.net.Socket;
-
 import org.jacoco.agent.rt.internal.IExceptionLogger;
 import org.jacoco.core.runtime.AgentOptions;
 import org.jacoco.core.runtime.RuntimeData;
+
+import java.io.IOException;
+import java.net.Socket;
 
 /**
  * Output that connects to a TCP port. This controller uses the following agent
@@ -29,61 +29,59 @@ import org.jacoco.core.runtime.RuntimeData;
  */
 public class TcpClientOutput implements IAgentOutput {
 
-	private final IExceptionLogger logger;
+    private final IExceptionLogger logger;
 
-	private TcpConnection connection;
+    private TcpConnection connection;
 
-	private Thread worker;
+    private Thread worker;
 
-	/**
-	 * New controller instance.
-	 *
-	 * @param logger
-	 *            logger to use in case of exceptions is spawned threads
-	 */
-	public TcpClientOutput(final IExceptionLogger logger) {
-		this.logger = logger;
-	}
+    /**
+     * New controller instance.
+     *
+     * @param logger logger to use in case of exceptions is spawned threads
+     */
+    public TcpClientOutput(final IExceptionLogger logger) {
+        this.logger = logger;
+    }
 
-	public void startup(final AgentOptions options, final RuntimeData data)
-			throws IOException {
-		final Socket socket = createSocket(options);
-		connection = new TcpConnection(socket, data);
-		connection.init();
-		worker = new Thread(new Runnable() {
-			public void run() {
-				try {
-					connection.run();
-				} catch (final IOException e) {
-					logger.logExeption(e);
-				}
-			}
-		});
-		worker.setName(getClass().getName());
-		worker.setDaemon(true);
-		worker.start();
-	}
+    public void startup(final AgentOptions options, final RuntimeData data)
+            throws IOException {
+        final Socket socket = createSocket(options);
+        connection = new TcpConnection(socket, data);
+        connection.init();
+        worker = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    connection.run();
+                } catch (final IOException e) {
+                    logger.logExeption(e);
+                }
+            }
+        });
+        worker.setName(getClass().getName());
+        worker.setDaemon(true);
+        worker.start();
+    }
 
-	public void shutdown() throws Exception {
-		connection.close();
-		worker.join();
-	}
+    public void shutdown() throws Exception {
+        connection.close();
+        worker.join();
+    }
 
-	public void writeExecutionData(final boolean reset) throws IOException {
-		connection.writeExecutionData(reset);
-	}
+    public void writeExecutionData(final boolean reset) throws IOException {
+        connection.writeExecutionData(reset);
+    }
 
-	/**
-	 * Open a socket based on the given configuration.
-	 *
-	 * @param options
-	 *            address and port configuration
-	 * @return opened socket
-	 * @throws IOException
-	 */
-	protected Socket createSocket(final AgentOptions options)
-			throws IOException {
-		return new Socket(options.getAddress(), options.getPort());
-	}
+    /**
+     * Open a socket based on the given configuration.
+     *
+     * @param options address and port configuration
+     * @return opened socket
+     * @throws IOException
+     */
+    protected Socket createSocket(final AgentOptions options)
+            throws IOException {
+        return new Socket(options.getAddress(), options.getPort());
+    }
 
 }

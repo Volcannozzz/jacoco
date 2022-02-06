@@ -27,49 +27,42 @@ import java.io.OutputStream;
 @Deprecated
 public final class RT {
 
-	private RT() {
-	}
+    private RT() {
+    }
 
-	/**
-	 * Writes the current execution data to the given file in JaCoCo execution
-	 * data format.
-	 *
-	 * @param outFile
-	 *            file to write execution data to
-	 * @param merge
-	 *            if <code>true</code>, execution data is appended to an
-	 *            existing file
-	 * @param stopDataCollection
-	 *            ignored
-	 * @throws IOException
-	 *             in case of problems with the file output
-	 */
-	@SuppressWarnings("unused")
-	public static void dumpCoverageData(final File outFile, final boolean merge,
-			final boolean stopDataCollection) throws IOException {
-		final OutputStream out = new FileOutputStream(outFile, merge);
-		try {
-			out.write(
-					org.jacoco.agent.rt.RT.getAgent().getExecutionData(false));
-		} finally {
-			out.close();
-		}
-	}
+    /**
+     * Writes the current execution data to the given file in JaCoCo execution
+     * data format.
+     *
+     * @param outFile            file to write execution data to
+     * @param merge              if <code>true</code>, execution data is appended to an
+     *                           existing file
+     * @param stopDataCollection ignored
+     * @throws IOException in case of problems with the file output
+     */
+    @SuppressWarnings("unused")
+    public static void dumpCoverageData(final File outFile, final boolean merge,
+                                        final boolean stopDataCollection) throws IOException {
+        final OutputStream out = new FileOutputStream(outFile, merge);
+        try {
+            out.write(
+                    org.jacoco.agent.rt.RT.getAgent().getExecutionData(false));
+        } finally {
+            out.close();
+        }
+    }
 
-	/**
-	 * Writes the current execution data to the given file in JaCoCo execution
-	 * data format. If the file already exists new data is appended.
-	 *
-	 * @param outFile
-	 *            file to write execution data to
-	 * @param stopDataCollection
-	 *            ignored
-	 * @throws IOException
-	 *             in case of problems with the file output
-	 */
-	public static synchronized void dumpCoverageData(final File outFile,
-			final boolean stopDataCollection) throws IOException {
-		dumpCoverageData(outFile, true, stopDataCollection);
-	}
+    /**
+     * Writes the current execution data to the given file in JaCoCo execution
+     * data format. If the file already exists new data is appended.
+     *
+     * @param outFile            file to write execution data to
+     * @param stopDataCollection ignored
+     * @throws IOException in case of problems with the file output
+     */
+    public static synchronized void dumpCoverageData(final File outFile,
+                                                     final boolean stopDataCollection) throws IOException {
+        dumpCoverageData(outFile, true, stopDataCollection);
+    }
 
 }

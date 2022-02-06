@@ -8,12 +8,12 @@
  *
  * Contributors:
  *    Marc R. Hoffmann - initial API and implementation
- *    
+ *
  *******************************************************************************/
 package org.jacoco.examples.expressions;
 
 public interface IExpression {
 
-	public double evaluate();
+    public double evaluate();
 
 }

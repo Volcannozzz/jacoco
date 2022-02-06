@@ -20,24 +20,21 @@ import java.io.OutputStream;
  */
 public interface IMultiReportOutput {
 
-	/**
-	 * Creates a file at the given local path. The returned {@link OutputStream}
-	 * has to be closed before the next document is created.
-	 *
-	 * @param path
-	 *            local path to the new document
-	 * @return output for the content
-	 * @throws IOException
-	 *             if the creation fails
-	 */
-	OutputStream createFile(String path) throws IOException;
+    /**
+     * Creates a file at the given local path. The returned {@link OutputStream}
+     * has to be closed before the next document is created.
+     *
+     * @param path local path to the new document
+     * @return output for the content
+     * @throws IOException if the creation fails
+     */
+    OutputStream createFile(String path) throws IOException;
 
-	/**
-	 * Closes the underlying resource container.
-	 *
-	 * @throws IOException
-	 *             if closing fails
-	 */
-	void close() throws IOException;
+    /**
+     * Closes the underlying resource container.
+     *
+     * @throws IOException if closing fails
+     */
+    void close() throws IOException;
 
 }

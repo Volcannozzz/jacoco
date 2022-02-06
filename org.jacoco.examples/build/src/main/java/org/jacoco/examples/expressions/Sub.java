@@ -8,23 +8,23 @@
  *
  * Contributors:
  *    Marc R. Hoffmann - initial API and implementation
- *    
+ *
  *******************************************************************************/
 package org.jacoco.examples.expressions;
 
 public class Sub implements IExpression {
 
-	private final IExpression l;
+    private final IExpression l;
 
-	private final IExpression r;
+    private final IExpression r;
 
-	public Sub(final IExpression l, final IExpression r) {
-		this.l = l;
-		this.r = r;
-	}
+    public Sub(final IExpression l, final IExpression r) {
+        this.l = l;
+        this.r = r;
+    }
 
-	public double evaluate() {
-		return l.evaluate() - r.evaluate();
-	}
+    public double evaluate() {
+        return l.evaluate() - r.evaluate();
+    }
 
 }

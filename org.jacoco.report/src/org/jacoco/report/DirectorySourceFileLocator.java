@@ -23,35 +23,32 @@ import java.io.InputStream;
  */
 public class DirectorySourceFileLocator extends InputStreamSourceFileLocator {
 
-	private final File directory;
+    private final File directory;
 
-	/**
-	 * Creates a new locator that searches for source files in the given
-	 * directory.
-	 *
-	 * @param directory
-	 *            directory to search for source file
-	 * @param encoding
-	 *            encoding of the source files, <code>null</code> for platform
-	 *            default encoding
-	 * @param tabWidth
-	 *            tab width in source files as number of blanks
-	 */
-	public DirectorySourceFileLocator(final File directory,
-			final String encoding, final int tabWidth) {
-		super(encoding, tabWidth);
-		this.directory = directory;
-	}
+    /**
+     * Creates a new locator that searches for source files in the given
+     * directory.
+     *
+     * @param directory directory to search for source file
+     * @param encoding  encoding of the source files, <code>null</code> for platform
+     *                  default encoding
+     * @param tabWidth  tab width in source files as number of blanks
+     */
+    public DirectorySourceFileLocator(final File directory,
+                                      final String encoding, final int tabWidth) {
+        super(encoding, tabWidth);
+        this.directory = directory;
+    }
 
-	@Override
-	protected InputStream getSourceStream(final String path)
-			throws IOException {
-		final File file = new File(directory, path);
-		if (file.isFile()) {
-			return new FileInputStream(file);
-		} else {
-			return null;
-		}
-	}
+    @Override
+    protected InputStream getSourceStream(final String path)
+            throws IOException {
+        final File file = new File(directory, path);
+        if (file.isFile()) {
+            return new FileInputStream(file);
+        } else {
+            return null;
+        }
+    }
 
 }

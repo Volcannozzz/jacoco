@@ -20,26 +20,23 @@ import java.io.Reader;
  */
 public interface ISourceFileLocator {
 
-	/**
-	 * Tries to locate the given source file and opens a reader with the
-	 * appropriate encoding.
-	 *
-	 * @param packageName
-	 *            VM name of the package
-	 * @param fileName
-	 *            name of the source file
-	 * @return reader if the file could be located, <code>null</code> otherwise
-	 * @throws IOException
-	 *             in case of problems while opening the file
-	 */
-	Reader getSourceFile(String packageName, String fileName)
-			throws IOException;
+    /**
+     * Tries to locate the given source file and opens a reader with the
+     * appropriate encoding.
+     *
+     * @param packageName VM name of the package
+     * @param fileName    name of the source file
+     * @return reader if the file could be located, <code>null</code> otherwise
+     * @throws IOException in case of problems while opening the file
+     */
+    Reader getSourceFile(String packageName, String fileName)
+            throws IOException;
 
-	/**
-	 * Returns number of blank characters that represent a tab in source code.
-	 *
-	 * @return tab width as number of blanks
-	 */
-	int getTabWidth();
+    /**
+     * Returns number of blank characters that represent a tab in source code.
+     *
+     * @return tab width as number of blanks
+     */
+    int getTabWidth();
 
 }

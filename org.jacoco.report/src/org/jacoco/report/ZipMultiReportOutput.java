@@ -23,87 +23,85 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipMultiReportOutput implements IMultiReportOutput {
 
-	private final ZipOutputStream zip;
+    private final ZipOutputStream zip;
 
-	private OutputStream currentEntry;
+    private OutputStream currentEntry;
 
-	/**
-	 * Creates a new instance based on the given {@link ZipOutputStream}.
-	 *
-	 * @param zip
-	 *            stream to write file entries to
-	 */
-	public ZipMultiReportOutput(final ZipOutputStream zip) {
-		this.zip = zip;
-	}
+    /**
+     * Creates a new instance based on the given {@link ZipOutputStream}.
+     *
+     * @param zip stream to write file entries to
+     */
+    public ZipMultiReportOutput(final ZipOutputStream zip) {
+        this.zip = zip;
+    }
 
-	/**
-	 * Creates a new instance based on the given {@link OutputStream}.
-	 *
-	 * @param out
-	 *            stream to write file entries to
-	 */
-	public ZipMultiReportOutput(final OutputStream out) {
-		this(new ZipOutputStream(out));
-	}
+    /**
+     * Creates a new instance based on the given {@link OutputStream}.
+     *
+     * @param out stream to write file entries to
+     */
+    public ZipMultiReportOutput(final OutputStream out) {
+        this(new ZipOutputStream(out));
+    }
 
-	public OutputStream createFile(final String path) throws IOException {
-		if (currentEntry != null) {
-			currentEntry.close();
-		}
-		final ZipEntry entry = new ZipEntry(path);
-		zip.putNextEntry(entry);
-		currentEntry = new EntryOutput();
-		return currentEntry;
-	}
+    public OutputStream createFile(final String path) throws IOException {
+        if (currentEntry != null) {
+            currentEntry.close();
+        }
+        final ZipEntry entry = new ZipEntry(path);
+        zip.putNextEntry(entry);
+        currentEntry = new EntryOutput();
+        return currentEntry;
+    }
 
-	public void close() throws IOException {
-		zip.close();
-	}
+    public void close() throws IOException {
+        zip.close();
+    }
 
-	private final class EntryOutput extends OutputStream {
+    private final class EntryOutput extends OutputStream {
 
-		private boolean closed = false;
+        private boolean closed = false;
 
-		@Override
-		public void write(final byte[] b, final int off, final int len)
-				throws IOException {
-			ensureNotClosed();
-			zip.write(b, off, len);
-		}
+        @Override
+        public void write(final byte[] b, final int off, final int len)
+                throws IOException {
+            ensureNotClosed();
+            zip.write(b, off, len);
+        }
 
-		@Override
-		public void write(final byte[] b) throws IOException {
-			ensureNotClosed();
-			zip.write(b);
-		}
+        @Override
+        public void write(final byte[] b) throws IOException {
+            ensureNotClosed();
+            zip.write(b);
+        }
 
-		@Override
-		public void write(final int b) throws IOException {
-			ensureNotClosed();
-			zip.write(b);
-		}
+        @Override
+        public void write(final int b) throws IOException {
+            ensureNotClosed();
+            zip.write(b);
+        }
 
-		@Override
-		public void flush() throws IOException {
-			ensureNotClosed();
-			zip.flush();
-		}
+        @Override
+        public void flush() throws IOException {
+            ensureNotClosed();
+            zip.flush();
+        }
 
-		@Override
-		public void close() throws IOException {
-			if (!closed) {
-				closed = true;
-				zip.closeEntry();
-			}
-		}
+        @Override
+        public void close() throws IOException {
+            if (!closed) {
+                closed = true;
+                zip.closeEntry();
+            }
+        }
 
-		private void ensureNotClosed() throws IOException {
-			if (closed) {
-				throw new IOException("Zip entry already closed.");
-			}
-		}
+        private void ensureNotClosed() throws IOException {
+            if (closed) {
+                throw new IOException("Zip entry already closed.");
+            }
+        }
 
-	}
+    }
 
 }

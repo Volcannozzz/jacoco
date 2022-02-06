@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.jacoco.agent.rt.internal;
 
-import java.util.Properties;
-
 import org.jacoco.core.runtime.AgentOptions;
 import org.jacoco.core.runtime.RuntimeData;
+
+import java.util.Properties;
 
 /**
  * The API for classes instrumented in "offline" mode. The agent configuration
@@ -23,43 +23,39 @@ import org.jacoco.core.runtime.RuntimeData;
  */
 public final class Offline {
 
-	private static final String CONFIG_RESOURCE = "/jacoco-agent.properties";
+    private static final String CONFIG_RESOURCE = "/jacoco-agent.properties";
+    private static RuntimeData data;
 
-	private Offline() {
-		// no instances
-	}
+    private Offline() {
+        // no instances
+    }
 
-	private static RuntimeData data;
+    private static synchronized RuntimeData getRuntimeData() {
+        if (data == null) {
+            final Properties config = ConfigLoader.load(CONFIG_RESOURCE,
+                    System.getProperties());
+            try {
+                data = Agent.getInstance(new AgentOptions(config)).getData();
+            } catch (final Exception e) {
+                throw new RuntimeException("Failed to initialize JaCoCo.", e);
+            }
+        }
+        return data;
+    }
 
-	private static synchronized RuntimeData getRuntimeData() {
-		if (data == null) {
-			final Properties config = ConfigLoader.load(CONFIG_RESOURCE,
-					System.getProperties());
-			try {
-				data = Agent.getInstance(new AgentOptions(config)).getData();
-			} catch (final Exception e) {
-				throw new RuntimeException("Failed to initialize JaCoCo.", e);
-			}
-		}
-		return data;
-	}
-
-	/**
-	 * API for offline instrumented classes.
-	 *
-	 * @param classid
-	 *            class identifier
-	 * @param classname
-	 *            VM class name
-	 * @param probecount
-	 *            probe count for this class
-	 * @return probe array instance for this class
-	 */
-	public static boolean[] getProbes(final long classid,
-			final String classname, final int probecount) {
-		return getRuntimeData()
-				.getExecutionData(Long.valueOf(classid), classname, probecount)
-				.getProbes();
-	}
+    /**
+     * API for offline instrumented classes.
+     *
+     * @param classid    class identifier
+     * @param classname  VM class name
+     * @param probecount probe count for this class
+     * @return probe array instance for this class
+     */
+    public static boolean[] getProbes(final long classid,
+                                      final String classname, final int probecount) {
+        return getRuntimeData()
+                .getExecutionData(Long.valueOf(classid), classname, probecount)
+                .getProbes();
+    }
 
 }

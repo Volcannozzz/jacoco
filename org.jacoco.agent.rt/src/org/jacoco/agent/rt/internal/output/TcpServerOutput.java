@@ -12,14 +12,14 @@
  *******************************************************************************/
 package org.jacoco.agent.rt.internal.output;
 
+import org.jacoco.agent.rt.internal.IExceptionLogger;
+import org.jacoco.core.runtime.AgentOptions;
+import org.jacoco.core.runtime.RuntimeData;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
-
-import org.jacoco.agent.rt.internal.IExceptionLogger;
-import org.jacoco.core.runtime.AgentOptions;
-import org.jacoco.core.runtime.RuntimeData;
 
 /**
  * Output that opens TCP server socket. This controller uses the following agent
@@ -31,97 +31,92 @@ import org.jacoco.core.runtime.RuntimeData;
  */
 public class TcpServerOutput implements IAgentOutput {
 
-	private TcpConnection connection;
+    private final IExceptionLogger logger;
+    private TcpConnection connection;
+    private ServerSocket serverSocket;
 
-	private final IExceptionLogger logger;
+    private Thread worker;
 
-	private ServerSocket serverSocket;
+    /**
+     * New controller instance.
+     *
+     * @param logger logger to use in case of exceptions is spawned threads
+     */
+    public TcpServerOutput(final IExceptionLogger logger) {
+        this.logger = logger;
+    }
 
-	private Thread worker;
+    public void startup(final AgentOptions options, final RuntimeData data)
+            throws IOException {
+        serverSocket = createServerSocket(options);
+        worker = new Thread(new Runnable() {
+            public void run() {
+                while (!serverSocket.isClosed()) {
+                    try {
+                        synchronized (serverSocket) {
+                            connection = new TcpConnection(
+                                    serverSocket.accept(), data);
+                        }
+                        connection.init();
+                        connection.run();
+                    } catch (final IOException e) {
+                        // If the serverSocket is closed while accepting
+                        // connections a SocketException is expected.
+                        if (!serverSocket.isClosed()) {
+                            logger.logExeption(e);
+                        }
+                    }
+                }
+            }
+        });
+        worker.setName(getClass().getName());
+        worker.setDaemon(true);
+        worker.start();
+    }
 
-	/**
-	 * New controller instance.
-	 *
-	 * @param logger
-	 *            logger to use in case of exceptions is spawned threads
-	 */
-	public TcpServerOutput(final IExceptionLogger logger) {
-		this.logger = logger;
-	}
+    public void shutdown() throws Exception {
+        serverSocket.close();
+        synchronized (serverSocket) {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        worker.join();
+    }
 
-	public void startup(final AgentOptions options, final RuntimeData data)
-			throws IOException {
-		serverSocket = createServerSocket(options);
-		worker = new Thread(new Runnable() {
-			public void run() {
-				while (!serverSocket.isClosed()) {
-					try {
-						synchronized (serverSocket) {
-							connection = new TcpConnection(
-									serverSocket.accept(), data);
-						}
-						connection.init();
-						connection.run();
-					} catch (final IOException e) {
-						// If the serverSocket is closed while accepting
-						// connections a SocketException is expected.
-						if (!serverSocket.isClosed()) {
-							logger.logExeption(e);
-						}
-					}
-				}
-			}
-		});
-		worker.setName(getClass().getName());
-		worker.setDaemon(true);
-		worker.start();
-	}
+    public void writeExecutionData(final boolean reset) throws IOException {
+        if (connection != null) {
+            connection.writeExecutionData(reset);
+        }
+    }
 
-	public void shutdown() throws Exception {
-		serverSocket.close();
-		synchronized (serverSocket) {
-			if (connection != null) {
-				connection.close();
-			}
-		}
-		worker.join();
-	}
+    /**
+     * Open a server socket based on the given configuration.
+     *
+     * @param options address and port configuration
+     * @return opened server socket
+     * @throws IOException
+     */
+    protected ServerSocket createServerSocket(final AgentOptions options)
+            throws IOException {
+        final InetAddress inetAddr = getInetAddress(options.getAddress());
+        return new ServerSocket(options.getPort(), 1, inetAddr);
+    }
 
-	public void writeExecutionData(final boolean reset) throws IOException {
-		if (connection != null) {
-			connection.writeExecutionData(reset);
-		}
-	}
-
-	/**
-	 * Open a server socket based on the given configuration.
-	 *
-	 * @param options
-	 *            address and port configuration
-	 * @return opened server socket
-	 * @throws IOException
-	 */
-	protected ServerSocket createServerSocket(final AgentOptions options)
-			throws IOException {
-		final InetAddress inetAddr = getInetAddress(options.getAddress());
-		return new ServerSocket(options.getPort(), 1, inetAddr);
-	}
-
-	/**
-	 * Returns the {@link InetAddress} object to open the server socket on.
-	 *
-	 * @param address
-	 *            address specified as a string
-	 * @return address to open the server socket
-	 * @throws UnknownHostException
-	 */
-	protected InetAddress getInetAddress(final String address)
-			throws UnknownHostException {
-		if ("*".equals(address)) {
-			return null;
-		} else {
-			return InetAddress.getByName(address);
-		}
-	}
+    /**
+     * Returns the {@link InetAddress} object to open the server socket on.
+     *
+     * @param address address specified as a string
+     * @return address to open the server socket
+     * @throws UnknownHostException
+     */
+    protected InetAddress getInetAddress(final String address)
+            throws UnknownHostException {
+        if ("*".equals(address)) {
+            return null;
+        } else {
+            return InetAddress.getByName(address);
+        }
+    }
 
 }

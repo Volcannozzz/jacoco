@@ -20,17 +20,17 @@ import org.jacoco.core.runtime.RuntimeData;
  */
 public class NoneOutput implements IAgentOutput {
 
-	public final void startup(final AgentOptions options,
-			final RuntimeData data) {
-		// Nothing to do
-	}
+    public final void startup(final AgentOptions options,
+                              final RuntimeData data) {
+        // Nothing to do
+    }
 
-	public void writeExecutionData(final boolean reset) {
-		// Nothing to do
-	}
+    public void writeExecutionData(final boolean reset) {
+        // Nothing to do
+    }
 
-	public void shutdown() {
-		// Nothing to do
-	}
+    public void shutdown() {
+        // Nothing to do
+    }
 
 }

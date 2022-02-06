@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.jacoco.report.internal;
 
-import java.io.IOException;
-
 import org.jacoco.core.analysis.CoverageNodeImpl;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.ICoverageNode.ElementType;
 import org.jacoco.report.IReportGroupVisitor;
 import org.jacoco.report.ISourceFileLocator;
+
+import java.io.IOException;
 
 /**
  * Internal base visitor to calculate group counter summaries for hierarchical

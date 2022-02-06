@@ -52,6 +52,8 @@ public class Analyzer {
 
     private final StringPool stringPool;
 
+    private final AnalyzerMode mode = AnalyzerMode.FULL;
+
     /**
      * Creates a new analyzer reporting to the given output.
      *
@@ -92,7 +94,9 @@ public class Analyzer {
             @Override
             public void visitEnd() {
                 super.visitEnd();
-                coverageVisitor.visitCoverage(coverage);
+                if (mode.equals(AnalyzerMode.FULL)) {
+                    coverageVisitor.visitCoverage(coverage);
+                }
             }
         };
         return new ClassProbesAdapter(analyzer, false);

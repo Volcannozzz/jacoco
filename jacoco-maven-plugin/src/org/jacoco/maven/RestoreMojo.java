@@ -12,14 +12,14 @@
  *******************************************************************************/
 package org.jacoco.maven;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.codehaus.plexus.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Restores original classes as they were before offline instrumentation.
@@ -29,19 +29,19 @@ import org.codehaus.plexus.util.FileUtils;
 @Mojo(name = "restore-instrumented-classes", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, threadSafe = true)
 public class RestoreMojo extends AbstractJacocoMojo {
 
-	@Override
-	protected void executeMojo()
-			throws MojoExecutionException, MojoFailureException {
-		final File originalClassesDir = new File(
-				getProject().getBuild().getDirectory(),
-				"generated-classes/jacoco");
-		final File classesDir = new File(
-				getProject().getBuild().getOutputDirectory());
-		try {
-			FileUtils.copyDirectoryStructure(originalClassesDir, classesDir);
-		} catch (final IOException e) {
-			throw new MojoFailureException("Unable to restore classes.", e);
-		}
-	}
+    @Override
+    protected void executeMojo()
+            throws MojoExecutionException, MojoFailureException {
+        final File originalClassesDir = new File(
+                getProject().getBuild().getDirectory(),
+                "generated-classes/jacoco");
+        final File classesDir = new File(
+                getProject().getBuild().getOutputDirectory());
+        try {
+            FileUtils.copyDirectoryStructure(originalClassesDir, classesDir);
+        } catch (final IOException e) {
+            throw new MojoFailureException("Unable to restore classes.", e);
+        }
+    }
 
 }

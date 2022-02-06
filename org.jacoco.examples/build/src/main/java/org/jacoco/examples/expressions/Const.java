@@ -8,20 +8,20 @@
  *
  * Contributors:
  *    Marc R. Hoffmann - initial API and implementation
- *    
+ *
  *******************************************************************************/
 package org.jacoco.examples.expressions;
 
 public class Const implements IExpression {
 
-	private final double value;
+    private final double value;
 
-	public Const(final double value) {
-		this.value = value;
-	}
+    public Const(final double value) {
+        this.value = value;
+    }
 
-	public double evaluate() {
-		return value;
-	}
+    public double evaluate() {
+        return value;
+    }
 
 }

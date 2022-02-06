@@ -8,7 +8,7 @@
  *
  * Contributors:
  *    Marc R. Hoffmann - initial API and implementation
- *    
+ *
  *******************************************************************************/
 package org.jacoco.examples.parser;
 
@@ -16,12 +16,12 @@ import java.io.IOException;
 
 public class Main {
 
-	public static void main(final String[] args) throws IOException {
-		for (String expression : args) {
-			ExpressionParser parser = new ExpressionParser(expression);
-			double result = parser.parse().evaluate();
-			System.out.printf("%s = %s%n", expression, result);
-		}
-	}
+    public static void main(final String[] args) throws IOException {
+        for (String expression : args) {
+            ExpressionParser parser = new ExpressionParser(expression);
+            double result = parser.parse().evaluate();
+            System.out.printf("%s = %s%n", expression, result);
+        }
+    }
 
 }
