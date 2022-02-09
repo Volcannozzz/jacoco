@@ -26,6 +26,8 @@ public final class ExecutionDataStore implements IExecutionDataVisitor {
 
     private final Map<Long, ExecutionData> entries = new HashMap<Long, ExecutionData>();
 
+    public Set<String> repeatClassNames = new HashSet<>();
+
     private final Set<String> names = new HashSet<String>();
 
     /**
@@ -42,11 +44,22 @@ public final class ExecutionDataStore implements IExecutionDataVisitor {
         final Long id = Long.valueOf(data.getId());
         final ExecutionData entry = entries.get(id);
         if (entry == null) {
-            entries.put(id, data);
-            names.add(data.getName());
+            // id不同，需要再次在已有的里面确认有没有
+            String className = data.getName();
+            if (names.contains(className)) {
+                repeatClassNames.add(className);
+            } else {
+                entries.put(id, data);
+                names.add(className);
+            }
         } else {
+            // 代码完全相同的类的合并
             entry.merge(data);
         }
+    }
+
+    public Set<String> getRepeatClassNames() {
+        return repeatClassNames;
     }
 
     /**
